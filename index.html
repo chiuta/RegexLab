@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RegexLab — regular-expression laboratory</title>
+<meta name="description" content="An offline regular-expression laboratory: live tester, plain-language explanation, replace, code export, pattern library and reference. No server, no account, no telemetry. One HTML file.">
+<meta name="author" content="A.I. Chiuță — chiuta.github.io">
+<meta property="og:title" content="RegexLab — offline regex laboratory">
+<meta property="og:description" content="Live regex testing, plain-language explanations, replace and code export — entirely in your browser. One file, forever free.">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#0b0d10; --panel:#13161c; --panel-2:#171b22;
+    --line:#262b34; --line-soft:#1d222a;
+    --txt:#d8dde6; --muted:#828b9b; --muted-2:#5d6573;
+    --signal:#ffb627; --signal-dim:#3a2e10; --signal-ink:#1a1305;
+    --danger:#ff5d5d; --ok:#4fd1c5; --dot:rgba(255,255,255,.025);
+    --mono: ui-monospace,'JetBrains Mono','Cascadia Code','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+    --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,system-ui,sans-serif;
+    --m0:#ffb627; --m1:#4fd1c5; --m2:#f06595; --m3:#a9e34b; --m4:#74b9ff; --m5:#e599f7;
+    --mark-ink:#0b0d10;
+  }
+  html[data-theme="light"]{
+    --bg:#f4f1ea; --panel:#fffdf8; --panel-2:#f1ece1;
+    --line:#ddd5c5; --line-soft:#e8e2d5;
+    --txt:#2a2620; --muted:#6f675a; --muted-2:#9a917f;
+    --signal:#b9760d; --signal-dim:#f4e6c8; --signal-ink:#fffdf8;
+    --danger:#c43b3b; --ok:#0f8a7e; --dot:rgba(0,0,0,.045);
+    --mark-ink:#1a1305;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg);color:var(--txt);font-family:var(--sans);
+    font-size:14px;line-height:1.55;
+    background-image:radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 0);
+    background-size:22px 22px;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:0 18px 60px}
+
+  header{display:flex;align-items:center;gap:14px;padding:18px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px}
+  .glyph{width:38px;height:38px;border:1px solid var(--signal);border-radius:8px;display:grid;place-items:center;
+    font-family:var(--mono);font-weight:700;color:var(--signal);font-size:18px;position:relative;
+    box-shadow:0 0 0 1px var(--signal-dim), inset 0 0 14px rgba(255,182,39,.08)}
+  .glyph::after{content:"";position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,182,39,.05) 3px 4px)}
+  .title h1{font-family:var(--mono);font-size:18px;font-weight:700;margin:0;letter-spacing:.5px}
+  .title h1 b{color:var(--signal)}
+  .title p{margin:0;font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+  .grow{flex:1}
+  .hbtn{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);font-family:var(--mono);
+    font-size:12px;padding:8px 12px;border-radius:8px;cursor:pointer;letter-spacing:.5px;height:36px;display:inline-flex;align-items:center;gap:7px;transition:.12s}
+  .hbtn:hover{color:var(--txt);border-color:var(--muted)}
+  select.lang{background:var(--panel-2);color:var(--txt);border:1px solid var(--line);border-radius:8px;
+    font-family:var(--mono);font-size:12px;padding:8px 10px;height:36px;cursor:pointer;outline:none;letter-spacing:.4px}
+  select.lang:focus{border-color:var(--signal)}
+  select.lang option{background:var(--panel);color:var(--txt)}
+
+  .pat-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .pat-row{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+  .delim{font-family:var(--mono);font-size:24px;color:var(--signal);display:grid;place-items:center;user-select:none;opacity:.8}
+  .pat-input-wrap{flex:1;min-width:230px;display:flex;flex-direction:column;justify-content:center}
+  #pattern{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--txt);
+    font-family:var(--mono);font-size:16px;padding:12px 14px;outline:none;transition:border-color .15s}
+  #pattern:focus{border-color:var(--signal)}
+  #pattern.err{border-color:var(--danger)}
+  .flags{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .flag{width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--panel-2);color:var(--muted);
+    font-family:var(--mono);font-size:14px;cursor:pointer;display:grid;place-items:center;position:relative;transition:.12s;align-self:center}
+  .flag:hover{border-color:var(--muted)}
+  .flag.on{background:var(--signal-dim);border-color:var(--signal);color:var(--signal);font-weight:700}
+  .flag .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg);
+    border:1px solid var(--line);color:var(--txt);font-family:var(--sans);font-size:11px;padding:5px 9px;border-radius:6px;
+    white-space:nowrap;opacity:0;pointer-events:none;transition:.12s;z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  .flag:hover .tip{opacity:1}
+  .pat-status{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+  .pat-status .err-msg{color:var(--danger)}
+  .pat-status b{color:var(--signal)}
+  .dot-led{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 8px var(--ok)}
+  .dot-led.bad{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .abtn{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:11px;
+    letter-spacing:.5px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:.12s;display:inline-flex;align-items:center;gap:6px}
+  .abtn:hover{color:var(--signal);border-color:var(--signal)}
+  .abtn .ok{color:var(--ok)}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .panel-head{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--line-soft)}
+  .panel-head h2{font-family:var(--mono);font-size:11px;font-weight:700;margin:0;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .panel-head .count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--signal);background:var(--signal-dim);padding:3px 9px;border-radius:20px}
+  .panel-head .mini{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:10px;
+    padding:3px 8px;border-radius:6px;cursor:pointer;margin-left:auto}
+  .panel-head .mini:hover{color:var(--signal);border-color:var(--signal)}
+  .panel-body{padding:14px 15px}
+
+  .editor{position:relative;font-family:var(--mono);font-size:14px;line-height:1.6}
+  .editor textarea,.editor .backdrop{margin:0;padding:13px 14px;border:1px solid var(--line);border-radius:8px;
+    font-family:var(--mono);font-size:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word;overflow-wrap:break-word;
+    width:100%;min-height:230px;letter-spacing:0}
+  .editor .backdrop{position:absolute;inset:0;color:transparent;background:var(--bg);overflow:auto;pointer-events:none;z-index:1}
+  .editor textarea{position:relative;background:transparent;color:var(--txt);caret-color:var(--signal);resize:vertical;outline:none;z-index:2}
+  .editor textarea:focus{border-color:var(--signal)}
+  .backdrop mark{border-radius:3px;color:var(--mark-ink);padding:1px 0}
+  .backdrop mark.m0{background:var(--m0)} .backdrop mark.m1{background:var(--m1)} .backdrop mark.m2{background:var(--m2)}
+  .backdrop mark.m3{background:var(--m3)} .backdrop mark.m4{background:var(--m4)} .backdrop mark.m5{background:var(--m5)}
+
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line-soft);overflow-x:auto}
+  .tabs button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);font-family:var(--mono);
+    font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:11px 13px;cursor:pointer;white-space:nowrap}
+  .tabs button:hover{color:var(--txt)}
+  .tabs button.on{color:var(--signal);border-bottom-color:var(--signal)}
+  .tabpane{display:none}
+  .tabpane.on{display:block}
+
+  .empty{color:var(--muted-2);font-size:13px;padding:18px 4px;text-align:center;font-style:italic}
+  .empty.warn{color:var(--danger);font-style:normal}
+  .match{border:1px solid var(--line-soft);border-radius:9px;margin-bottom:10px;overflow:hidden}
+  .match-head{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--panel-2);font-family:var(--mono);font-size:12px}
+  .swatch{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .match-head .mtxt{color:var(--txt);word-break:break-all}
+  .match-head .pos{margin-left:auto;color:var(--muted);font-size:11px;flex-shrink:0}
+  .groups{padding:4px 12px 9px}
+  .group-row{display:flex;gap:10px;padding:4px 0;font-family:var(--mono);font-size:12px;border-top:1px solid var(--line-soft)}
+  .group-row:first-child{border-top:0}
+  .group-row .gk{color:var(--muted);min-width:84px;flex-shrink:0}
+  .group-row .gv{color:var(--ok);word-break:break-all}
+  .group-row .gv.empty-g{color:var(--muted-2);font-style:italic}
+  .more-note{font-family:var(--mono);font-size:11px;color:var(--muted-2);text-align:center;padding:6px}
+
+  .explain-list{list-style:none;margin:0;padding:0;font-size:13.5px}
+  .explain-list li{padding:5px 0;display:flex;gap:9px;align-items:flex-start;border-bottom:1px solid var(--line-soft)}
+  .explain-list li:last-child{border-bottom:0}
+  .explain-list li .bullet{color:var(--signal);font-family:var(--mono);flex-shrink:0;margin-top:1px}
+  .explain-list li .alt{color:var(--muted-2);font-style:italic}
+
+  .replace-in{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--txt);
+    font-family:var(--mono);font-size:14px;padding:11px 13px;outline:none;margin-bottom:12px}
+  .replace-in:focus{border-color:var(--signal)}
+  .replace-out{background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:13px 14px;font-family:var(--mono);
+    font-size:14px;white-space:pre-wrap;word-break:break-word;min-height:90px;color:var(--txt)}
+  .hint{font-size:11px;color:var(--muted);margin:0 0 8px;font-family:var(--mono)}
+  .sub-label{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);margin:0 0 6px}
+
+  .code-block{position:relative;margin-bottom:14px}
+  .code-block .cl{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--signal);margin-bottom:5px}
+  .code-block pre{margin:0;background:var(--bg);border:1px solid var(--line-soft);border-radius:8px;padding:12px 13px;
+    font-family:var(--mono);font-size:12.5px;color:var(--txt);overflow-x:auto;white-space:pre}
+  .code-block .copy{position:absolute;top:26px;right:8px;background:var(--panel-2);border:1px solid var(--line);color:var(--muted);
+    font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:6px;cursor:pointer}
+  .code-block .copy:hover{color:var(--signal);border-color:var(--signal)}
+
+  .lib-cat{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);margin:14px 0 7px;border-bottom:1px solid var(--line-soft);padding-bottom:4px}
+  .lib-cat:first-child{margin-top:0}
+  .lib-item{border:1px solid var(--line-soft);border-radius:9px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.12s}
+  .lib-item:hover{border-color:var(--signal);background:var(--panel-2)}
+  .lib-item .li-name{font-size:13px;color:var(--txt);font-weight:600;display:flex;align-items:center;gap:8px}
+  .lib-item .li-name .load{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--signal);opacity:0;transition:.12s}
+  .lib-item:hover .li-name .load{opacity:1}
+  .lib-item .li-re{font-family:var(--mono);font-size:11.5px;color:var(--ok);margin-top:4px;word-break:break-all}
+  .lib-item .li-desc{font-size:11px;color:var(--muted);margin-top:3px}
+
+  .cheat-cat{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--signal);margin:16px 0 8px}
+  .cheat-cat:first-child{margin-top:0}
+  .cheat-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:12.5px;align-items:baseline}
+  .cheat-grid code{font-family:var(--mono);color:var(--signal);background:var(--bg);border:1px solid var(--line-soft);border-radius:5px;padding:2px 7px;font-size:12px;white-space:nowrap}
+  .cheat-grid span{color:var(--muted);padding:2px 0}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal-bg.on{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:520px;width:100%;max-height:86vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .modal-head{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line-soft);position:sticky;top:0;background:var(--panel)}
+  .modal-head h3{font-family:var(--mono);font-size:14px;margin:0;color:var(--signal);letter-spacing:.5px}
+  .modal-head .x{margin-left:auto;background:transparent;border:1px solid var(--line);color:var(--muted);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:16px}
+  .modal-head .x:hover{color:var(--danger);border-color:var(--danger)}
+  .modal-body{padding:18px 20px}
+  .modal-body h4{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--signal);margin:18px 0 7px}
+  .modal-body h4:first-child{margin-top:0}
+  .modal-body p{margin:0 0 8px;font-size:13.5px;color:var(--txt);line-height:1.6}
+  .links{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}
+  .links a{display:inline-flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line);color:var(--txt);
+    text-decoration:none;font-family:var(--mono);font-size:12px;padding:9px 13px;border-radius:9px;transition:.12s}
+  .links a:hover{border-color:var(--signal);color:var(--signal)}
+  .links a.primary{background:var(--signal);color:var(--signal-ink);border-color:var(--signal);font-weight:700}
+  .links a.primary:hover{color:var(--signal-ink);filter:brightness(1.06)}
+
+  footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted-2);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+  footer .sig{color:var(--muted)}
+  footer a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted-2)}
+  footer a:hover{color:var(--signal)}
+  ::selection{background:var(--signal);color:var(--signal-ink)}
+  textarea{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="glyph">/*/</div>
+      <div class="title">
+        <h1>Regex<b>Lab</b></h1>
+        <p data-i18n="tagline">regular-expression laboratory · offline</p>
+      </div>
+    </div>
+    <div class="grow"></div>
+    <button class="hbtn" id="themeBtn" title="theme">◐ <span data-i18n="themeToggle">Theme</span></button>
+    <select class="lang" id="langSel" aria-label="language"></select>
+    <button class="hbtn" id="aboutBtn"><span data-i18n="aboutBtn">About</span></button>
+  </header>
+
+  <div class="pat-card">
+    <div class="pat-row">
+      <div class="delim">/</div>
+      <div class="pat-input-wrap">
+        <input id="pattern" type="text" spellcheck="false" autocomplete="off" value="([A-Za-z]+)\s(\d+)">
+      </div>
+      <div class="delim">/</div>
+      <div class="flags" id="flags"></div>
+    </div>
+    <div class="pat-status">
+      <span><span class="dot-led" id="led"></span> <span id="statusText">valid</span></span>
+      <span data-i18n="matchesLabel">matches:</span> <b id="statMatches">0</b>
+      <span data-i18n="timeLabel">time:</span> <b id="statTime">0.0 ms</b>
+      <span class="err-msg" id="errMsg"></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="abtn" id="copyRegexBtn"><span data-i18n="copyRegex">Copy regex</span></button>
+    <button class="abtn" id="copyLinkBtn"><span data-i18n="copyLink">Copy link</span></button>
+    <button class="abtn" id="resetBtn"><span data-i18n="reset">Reset</span></button>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-head">
+        <h2 data-i18n="subjectTitle">Test string</h2>
+        <span class="count" id="leftCount">0</span>
+      </div>
+      <div class="panel-body">
+        <div class="editor">
+          <div class="backdrop" id="backdrop"></div>
+          <textarea id="subject" spellcheck="false" autocomplete="off"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" id="tabs">
+        <button data-tab="matches" class="on" data-i18n="tabMatches">Matches</button>
+        <button data-tab="explain" data-i18n="tabExplain">Explanation</button>
+        <button data-tab="replace" data-i18n="tabReplace">Replace</button>
+        <button data-tab="code" data-i18n="tabCode">Code</button>
+        <button data-tab="library" data-i18n="tabLibrary">Library</button>
+        <button data-tab="cheat" data-i18n="tabCheat">Reference</button>
+      </div>
+      <div class="panel-body">
+        <div class="tabpane on" id="pane-matches"></div>
+        <div class="tabpane" id="pane-explain"></div>
+        <div class="tabpane" id="pane-replace">
+          <p class="hint" data-i18n="replaceHint">Use $1, $2 … for groups, $& for the whole match.</p>
+          <input class="replace-in" id="replaceStr" spellcheck="false" value="$2 $1">
+          <p class="sub-label" data-i18n="replaceResult">Result</p>
+          <div class="replace-out" id="replaceOut"></div>
+        </div>
+        <div class="tabpane" id="pane-code">
+          <p class="hint" data-i18n="codeHint">Ready-to-paste snippets for your language.</p>
+          <div id="codeOut"></div>
+        </div>
+        <div class="tabpane" id="pane-library"></div>
+        <div class="tabpane" id="pane-cheat"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="sig">RegexLab · <span data-i18n="footL">single file · zero server · runs entirely in the browser</span></span>
+    <span><span data-i18n="footR">built in the spirit of</span> <a href="https://www.trom.tf" target="_blank" rel="noopener noreferrer">trade-free</a></span>
+  </footer>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="modal-bg" id="aboutModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 data-i18n="aboutTitle">About RegexLab</h3>
+      <button class="x" id="closeModal" aria-label="close">✕</button>
+    </div>
+    <div class="modal-body">
+      <h4 data-i18n="authorH">The author</h4>
+      <p data-i18n="authorBody"></p>
+      <h4 data-i18n="tradeFreeH">Trade-free</h4>
+      <p data-i18n="tradeFreeBody"></p>
+      <h4 data-i18n="supportH">Support the project</h4>
+      <p data-i18n="supportBody"></p>
+      <div class="links">
+        <a class="primary" href="https://www.patreon.com/c/alexio_tf" target="_blank" rel="noopener noreferrer" data-i18n="patreon">Patreon</a>
+        <a href="https://buymeacoffee.com/echo.of.the.strings" target="_blank" rel="noopener noreferrer" data-i18n="bmc">Buy Me a Coffee</a>
+        <a href="https://chiuta.github.io" target="_blank" rel="noopener noreferrer" data-i18n="visitSite">Website</a>
+        <a href="mailto:alexio@trom.tf" data-i18n="contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   RegexLab v2 — single file, no external dependencies.
+   ========================================================= */
+
+/* ---------- safe storage (degrades in sandboxed iframes) ---------- */
+const store={
+  get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+  set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+};
+
+/* ---------- language metadata ---------- */
+const LANGS=[
+  {code:'en',label:'English'},{code:'ro',label:'Română'},{code:'fr',label:'Français'},
+  {code:'it',label:'Italiano'},{code:'es',label:'Español'},{code:'pt',label:'Português'},{code:'de',label:'Deutsch'}
+];
+
+/* =========================================================
+   I18N — UI labels (7 languages, identical key sets)
+   ========================================================= */
+const I18N={
+  en:{tagline:'regular-expression laboratory · offline',themeToggle:'Theme',aboutBtn:'About',
+    matchesLabel:'matches:',timeLabel:'time:',validS:'valid',errorS:'error',subjectTitle:'Test string',
+    tabMatches:'Matches',tabExplain:'Explanation',tabReplace:'Replace',tabCode:'Code',tabLibrary:'Library',tabCheat:'Reference',
+    noMatch:'No match. Adjust the pattern or the text.',emptyPattern:'Enter a pattern to begin.',
+    explainEmpty:'Enter a valid pattern to see an explanation.',
+    timeoutMsg:'Timed out — possible catastrophic backtracking. Simplify the pattern.',
+    emptyGroup:'(did not participate)',zeroLen:'zero-length',pos:'pos.',
+    replaceHint:'Use $1, $2 … for groups, $& for the whole match.',replaceResult:'Result',
+    codeHint:'Ready-to-paste snippets for your language.',
+    copyRegex:'Copy regex',copyLink:'Copy link',reset:'Reset',copyMatches:'copy',copied:'copied ✓',linkCopied:'link copied ✓',
+    aboutTitle:'About RegexLab',authorH:'The author',
+    authorBody:'RegexLab is made by Alexandru-Ionuț Chiuță (Ecoul Stringurilor), a developer, SF author and musician. More single-file, server-free, telemetry-free tools at chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'This tool is offered freely, in the spirit of the trade-free movement (TROM): no ads, no accounts, no tracking. Your text never leaves your device.',
+    supportH:'Support the project',supportBody:'If you find it useful and want to support the work, you can do so here:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Website',contact:'Contact',closeLbl:'Close',
+    footL:'single file · zero server · runs entirely in the browser',footR:'built in the spirit of',
+    flagTips:{g:'global — all matches',i:'case-insensitive',m:'multiline — ^ and $ per line',s:'dotAll — . matches newline',u:'unicode',y:'sticky'}},
+  ro:{tagline:'laborator de expresii regulate · offline',themeToggle:'Temă',aboutBtn:'Despre',
+    matchesLabel:'potriviri:',timeLabel:'timp:',validS:'valid',errorS:'eroare',subjectTitle:'Text de testare',
+    tabMatches:'Potriviri',tabExplain:'Explicație',tabReplace:'Înlocuire',tabCode:'Cod',tabLibrary:'Bibliotecă',tabCheat:'Referință',
+    noMatch:'Nicio potrivire. Modifică pattern-ul sau textul.',emptyPattern:'Introdu un pattern pentru a începe.',
+    explainEmpty:'Introdu un pattern valid pentru explicație.',
+    timeoutMsg:'Timp depășit — posibil backtracking catastrofic. Simplifică pattern-ul.',
+    emptyGroup:'(nu a participat)',zeroLen:'lungime zero',pos:'poz.',
+    replaceHint:'Folosește $1, $2 … pentru grupuri, $& pentru întreaga potrivire.',replaceResult:'Rezultat',
+    codeHint:'Fragmente gata de copiat pentru limbajul tău.',
+    copyRegex:'Copiază regex',copyLink:'Copiază link',reset:'Resetează',copyMatches:'copiază',copied:'copiat ✓',linkCopied:'link copiat ✓',
+    aboutTitle:'Despre RegexLab',authorH:'Autorul',
+    authorBody:'RegexLab este realizat de Alexandru-Ionuț Chiuță (Ecoul Stringurilor), dezvoltator, autor SF și muzician. Mai multe instrumente cu fișier unic, fără server și fără telemetrie, la chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Acest instrument este oferit liber, în spiritul mișcării trade-free (TROM): fără reclame, fără conturi, fără urmărire. Textul tău nu părăsește niciodată dispozitivul.',
+    supportH:'Susține proiectul',supportBody:'Dacă îți este de folos și vrei să susții munca, o poți face aici:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Închide',
+    footL:'un singur fișier · zero server · rulează complet în browser',footR:'construit în spiritul',
+    flagTips:{g:'global — toate potrivirile',i:'insensibil la majuscule',m:'multilinie — ^ și $ pe fiecare rând',s:'dotAll — . include newline',u:'unicode',y:'sticky'}},
+  fr:{tagline:'laboratoire d’expressions régulières · hors-ligne',themeToggle:'Thème',aboutBtn:'À propos',
+    matchesLabel:'correspondances :',timeLabel:'temps :',validS:'valide',errorS:'erreur',subjectTitle:'Texte de test',
+    tabMatches:'Correspondances',tabExplain:'Explication',tabReplace:'Remplacer',tabCode:'Code',tabLibrary:'Bibliothèque',tabCheat:'Référence',
+    noMatch:'Aucune correspondance. Modifiez le motif ou le texte.',emptyPattern:'Saisissez un motif pour commencer.',
+    explainEmpty:'Saisissez un motif valide pour voir l’explication.',
+    timeoutMsg:'Délai dépassé — possible retour-arrière catastrophique. Simplifiez le motif.',
+    emptyGroup:'(non participé)',zeroLen:'longueur nulle',pos:'pos.',
+    replaceHint:'Utilisez $1, $2 … pour les groupes, $& pour toute la correspondance.',replaceResult:'Résultat',
+    codeHint:'Extraits prêts à coller pour votre langage.',
+    copyRegex:'Copier le regex',copyLink:'Copier le lien',reset:'Réinitialiser',copyMatches:'copier',copied:'copié ✓',linkCopied:'lien copié ✓',
+    aboutTitle:'À propos de RegexLab',authorH:'L’auteur',
+    authorBody:'RegexLab est réalisé par Alexandru-Ionuț Chiuță (Ecoul Stringurilor), développeur, auteur de SF et musicien. D’autres outils en fichier unique, sans serveur ni télémétrie, sur chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Cet outil est offert librement, dans l’esprit du mouvement trade-free (TROM) : pas de publicité, pas de comptes, pas de suivi. Votre texte ne quitte jamais votre appareil.',
+    supportH:'Soutenir le projet',supportBody:'S’il vous est utile et que vous souhaitez soutenir ce travail, vous pouvez le faire ici :',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Fermer',
+    footL:'fichier unique · zéro serveur · fonctionne entièrement dans le navigateur',footR:'construit dans l’esprit du',
+    flagTips:{g:'global — toutes les correspondances',i:'insensible à la casse',m:'multiligne — ^ et $ par ligne',s:'dotAll — . inclut le saut de ligne',u:'unicode',y:'sticky'}},
+  it:{tagline:'laboratorio di espressioni regolari · offline',themeToggle:'Tema',aboutBtn:'Info',
+    matchesLabel:'corrispondenze:',timeLabel:'tempo:',validS:'valido',errorS:'errore',subjectTitle:'Testo di prova',
+    tabMatches:'Corrispondenze',tabExplain:'Spiegazione',tabReplace:'Sostituisci',tabCode:'Codice',tabLibrary:'Libreria',tabCheat:'Riferimento',
+    noMatch:'Nessuna corrispondenza. Modifica il pattern o il testo.',emptyPattern:'Inserisci un pattern per iniziare.',
+    explainEmpty:'Inserisci un pattern valido per vedere la spiegazione.',
+    timeoutMsg:'Tempo scaduto — possibile backtracking catastrofico. Semplifica il pattern.',
+    emptyGroup:'(non partecipato)',zeroLen:'lunghezza zero',pos:'pos.',
+    replaceHint:'Usa $1, $2 … per i gruppi, $& per l’intera corrispondenza.',replaceResult:'Risultato',
+    codeHint:'Frammenti pronti da incollare per il tuo linguaggio.',
+    copyRegex:'Copia regex',copyLink:'Copia link',reset:'Reimposta',copyMatches:'copia',copied:'copiato ✓',linkCopied:'link copiato ✓',
+    aboutTitle:'Informazioni su RegexLab',authorH:'L’autore',
+    authorBody:'RegexLab è realizzato da Alexandru-Ionuț Chiuță (Ecoul Stringurilor), sviluppatore, autore di fantascienza e musicista. Altri strumenti a file singolo, senza server e senza telemetria, su chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Questo strumento è offerto liberamente, nello spirito del movimento trade-free (TROM): niente pubblicità, niente account, niente tracciamento. Il tuo testo non lascia mai il dispositivo.',
+    supportH:'Sostieni il progetto',supportBody:'Se ti è utile e vuoi sostenere il lavoro, puoi farlo qui:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sito web',contact:'Contatto',closeLbl:'Chiudi',
+    footL:'file singolo · zero server · funziona interamente nel browser',footR:'costruito nello spirito di',
+    flagTips:{g:'global — tutte le corrispondenze',i:'senza distinzione maiuscole',m:'multilinea — ^ e $ per riga',s:'dotAll — . include il newline',u:'unicode',y:'sticky'}},
+  es:{tagline:'laboratorio de expresiones regulares · sin conexión',themeToggle:'Tema',aboutBtn:'Acerca de',
+    matchesLabel:'coincidencias:',timeLabel:'tiempo:',validS:'válido',errorS:'error',subjectTitle:'Texto de prueba',
+    tabMatches:'Coincidencias',tabExplain:'Explicación',tabReplace:'Reemplazar',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referencia',
+    noMatch:'Sin coincidencias. Ajusta el patrón o el texto.',emptyPattern:'Introduce un patrón para empezar.',
+    explainEmpty:'Introduce un patrón válido para ver la explicación.',
+    timeoutMsg:'Tiempo agotado — posible retroceso catastrófico. Simplifica el patrón.',
+    emptyGroup:'(no participó)',zeroLen:'longitud cero',pos:'pos.',
+    replaceHint:'Usa $1, $2 … para los grupos, $& para toda la coincidencia.',replaceResult:'Resultado',
+    codeHint:'Fragmentos listos para pegar en tu lenguaje.',
+    copyRegex:'Copiar regex',copyLink:'Copiar enlace',reset:'Restablecer',copyMatches:'copiar',copied:'copiado ✓',linkCopied:'enlace copiado ✓',
+    aboutTitle:'Acerca de RegexLab',authorH:'El autor',
+    authorBody:'RegexLab está hecho por Alexandru-Ionuț Chiuță (Ecoul Stringurilor), desarrollador, autor de ciencia ficción y músico. Más herramientas de archivo único, sin servidor y sin telemetría, en chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Esta herramienta se ofrece libremente, en el espíritu del movimiento trade-free (TROM): sin anuncios, sin cuentas, sin seguimiento. Tu texto nunca sale de tu dispositivo.',
+    supportH:'Apoya el proyecto',supportBody:'Si te resulta útil y quieres apoyar el trabajo, puedes hacerlo aquí:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sitio web',contact:'Contacto',closeLbl:'Cerrar',
+    footL:'archivo único · cero servidor · funciona enteramente en el navegador',footR:'construido en el espíritu de',
+    flagTips:{g:'global — todas las coincidencias',i:'sin distinción de mayúsculas',m:'multilínea — ^ y $ por línea',s:'dotAll — . incluye el salto de línea',u:'unicode',y:'sticky'}},
+  pt:{tagline:'laboratório de expressões regulares · offline',themeToggle:'Tema',aboutBtn:'Sobre',
+    matchesLabel:'correspondências:',timeLabel:'tempo:',validS:'válido',errorS:'erro',subjectTitle:'Texto de teste',
+    tabMatches:'Correspondências',tabExplain:'Explicação',tabReplace:'Substituir',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referência',
+    noMatch:'Sem correspondências. Ajuste o padrão ou o texto.',emptyPattern:'Introduza um padrão para começar.',
+    explainEmpty:'Introduza um padrão válido para ver a explicação.',
+    timeoutMsg:'Tempo esgotado — possível retrocesso catastrófico. Simplifique o padrão.',
+    emptyGroup:'(não participou)',zeroLen:'comprimento zero',pos:'pos.',
+    replaceHint:'Use $1, $2 … para os grupos, $& para toda a correspondência.',replaceResult:'Resultado',
+    codeHint:'Trechos prontos a colar para a sua linguagem.',
+    copyRegex:'Copiar regex',copyLink:'Copiar ligação',reset:'Repor',copyMatches:'copiar',copied:'copiado ✓',linkCopied:'ligação copiada ✓',
+    aboutTitle:'Sobre o RegexLab',authorH:'O autor',
+    authorBody:'O RegexLab é feito por Alexandru-Ionuț Chiuță (Ecoul Stringurilor), programador, autor de FC e músico. Mais ferramentas de ficheiro único, sem servidor e sem telemetria, em chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Esta ferramenta é oferecida livremente, no espírito do movimento trade-free (TROM): sem anúncios, sem contas, sem rastreio. O seu texto nunca sai do dispositivo.',
+    supportH:'Apoie o projeto',supportBody:'Se lhe for útil e quiser apoiar o trabalho, pode fazê-lo aqui:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site',contact:'Contacto',closeLbl:'Fechar',
+    footL:'ficheiro único · zero servidor · corre inteiramente no navegador',footR:'construído no espírito do',
+    flagTips:{g:'global — todas as correspondências',i:'ignora maiúsculas',m:'multilinha — ^ e $ por linha',s:'dotAll — . inclui newline',u:'unicode',y:'sticky'}},
+  de:{tagline:'Labor für reguläre Ausdrücke · offline',themeToggle:'Thema',aboutBtn:'Über',
+    matchesLabel:'Treffer:',timeLabel:'Zeit:',validS:'gültig',errorS:'Fehler',subjectTitle:'Testtext',
+    tabMatches:'Treffer',tabExplain:'Erklärung',tabReplace:'Ersetzen',tabCode:'Code',tabLibrary:'Bibliothek',tabCheat:'Referenz',
+    noMatch:'Kein Treffer. Passe das Muster oder den Text an.',emptyPattern:'Gib ein Muster ein, um zu beginnen.',
+    explainEmpty:'Gib ein gültiges Muster ein, um die Erklärung zu sehen.',
+    timeoutMsg:'Zeitüberschreitung — mögliches katastrophales Backtracking. Vereinfache das Muster.',
+    emptyGroup:'(nicht beteiligt)',zeroLen:'Länge null',pos:'Pos.',
+    replaceHint:'Verwende $1, $2 … für Gruppen, $& für den ganzen Treffer.',replaceResult:'Ergebnis',
+    codeHint:'Einfügefertige Schnipsel für deine Sprache.',
+    copyRegex:'Regex kopieren',copyLink:'Link kopieren',reset:'Zurücksetzen',copyMatches:'kopieren',copied:'kopiert ✓',linkCopied:'Link kopiert ✓',
+    aboutTitle:'Über RegexLab',authorH:'Der Autor',
+    authorBody:'RegexLab wurde von Alexandru-Ionuț Chiuță (Ecoul Stringurilor) erstellt, Entwickler, SF-Autor und Musiker. Weitere Werkzeuge als Einzeldatei, ohne Server und ohne Telemetrie, auf chiuta.github.io.',
+    tradeFreeH:'Trade-free',
+    tradeFreeBody:'Dieses Werkzeug wird frei angeboten, im Geist der Trade-free-Bewegung (TROM): keine Werbung, keine Konten, kein Tracking. Dein Text verlässt nie dein Gerät.',
+    supportH:'Das Projekt unterstützen',supportBody:'Wenn es dir nützlich ist und du die Arbeit unterstützen möchtest, kannst du das hier tun:',
+    patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Webseite',contact:'Kontakt',closeLbl:'Schließen',
+    footL:'Einzeldatei · null Server · läuft vollständig im Browser',footR:'gebaut im Geist von',
+    flagTips:{g:'global — alle Treffer',i:'Groß-/Kleinschreibung ignorieren',m:'mehrzeilig — ^ und $ pro Zeile',s:'dotAll — . trifft Zeilenumbruch',u:'unicode',y:'sticky'}}
+};
+
+/* ---------- localized sample text ---------- */
+const SAMPLE={
+  en:`RegexLab — quick usage guide
+
+Step 1: type a pattern in the top bar, between the two slashes. Start simple: \\d+ finds every number, \\w+ finds every word.
+
+Step 2: toggle the flags g i m s u y on the right. Hover any of them for an explanation. "g" finds all matches, "i" ignores case.
+
+Step 3: write the text you want to test here, on the left. Matches are highlighted in colour, live.
+
+Step 4: use the tabs on the right — Matches shows captured groups, Explanation turns the pattern into plain language, Replace tests $1 $2 $&, Code exports the regex to JS, Python, PHP and Go.
+
+Step 5: load ready-made patterns from the Library with one click; Reference is a full cheatsheet.
+
+Press "About" for the author and the trade-free philosophy. Everything runs offline, in the browser — your text never leaves the device.
+
+Test data:
+Email: hello@trom.tf — code #FFB627.
+Phone: +1 555 010 2030. Meeting on 2026-05-08.`,
+  ro:`RegexLab — ghid rapid de utilizare
+
+Pasul 1: scrie un pattern în bara de sus, între cele două bare oblice. Începe simplu: \\d+ găsește toate numerele, iar \\w+ găsește toate cuvintele.
+
+Pasul 2: comută flag-urile g i m s u y din dreapta. Treci cu mouse-ul peste fiecare pentru explicație. "g" caută toate potrivirile, "i" ignoră majusculele.
+
+Pasul 3: scrie aici, în stânga, textul de testat. Potrivirile se evidențiază colorat, pe loc.
+
+Pasul 4: folosește filele din dreapta — Potriviri arată grupurile capturate, Explicație traduce pattern-ul în limbaj normal, Înlocuire testează $1 $2 $&, Cod exportă regex-ul în JS, Python, PHP și Go.
+
+Pasul 5: din Bibliotecă încarci pattern-uri gata făcute cu un clic; Referință e o foaie completă de comenzi.
+
+Apasă "Despre" pentru autor și pentru filosofia trade-free. Totul rulează offline, în browser — textul tău nu pleacă nicăieri.
+
+Date pentru testare:
+Email: alexio@trom.tf — CNP 1900101410012.
+Telefon: 0722 333 444. Cod: #FFB627. Întâlnire pe 2026-05-08 la FTMB București.`,
+  fr:`RegexLab — guide d'utilisation rapide
+
+Étape 1 : saisissez un motif dans la barre du haut, entre les deux barres obliques. Commencez simplement : \\d+ trouve tous les nombres, \\w+ trouve tous les mots.
+
+Étape 2 : activez les drapeaux g i m s u y à droite. Survolez-en un pour une explication. "g" trouve toutes les correspondances, "i" ignore la casse.
+
+Étape 3 : écrivez ici, à gauche, le texte à tester. Les correspondances sont surlignées en couleur, en direct.
+
+Étape 4 : utilisez les onglets à droite — Correspondances montre les groupes capturés, Explication traduit le motif en langage clair, Remplacer teste $1 $2 $&, Code exporte le regex vers JS, Python, PHP et Go.
+
+Étape 5 : chargez des motifs prêts à l'emploi depuis la Bibliothèque en un clic ; Référence est un aide-mémoire complet.
+
+Cliquez sur "À propos" pour l'auteur et la philosophie trade-free. Tout fonctionne hors-ligne, dans le navigateur — votre texte ne quitte jamais l'appareil.
+
+Données de test :
+E-mail : bonjour@trom.tf — code #FFB627.
+Téléphone : +33 6 12 34 56. Réunion le 2026-05-08.`,
+  it:`RegexLab — guida rapida all'uso
+
+Passo 1: scrivi un pattern nella barra in alto, tra le due barre oblique. Inizia semplice: \\d+ trova tutti i numeri, \\w+ trova tutte le parole.
+
+Passo 2: attiva i flag g i m s u y a destra. Passa il mouse su ciascuno per una spiegazione. "g" trova tutte le corrispondenze, "i" ignora le maiuscole.
+
+Passo 3: scrivi qui, a sinistra, il testo da provare. Le corrispondenze vengono evidenziate a colori, in tempo reale.
+
+Passo 4: usa le schede a destra — Corrispondenze mostra i gruppi catturati, Spiegazione traduce il pattern in linguaggio chiaro, Sostituisci prova $1 $2 $&, Codice esporta il regex in JS, Python, PHP e Go.
+
+Passo 5: carica pattern pronti dalla Libreria con un clic; Riferimento è un prontuario completo.
+
+Premi "Info" per l'autore e la filosofia trade-free. Tutto funziona offline, nel browser — il tuo testo non lascia mai il dispositivo.
+
+Dati di prova:
+E-mail: ciao@trom.tf — codice #FFB627.
+Telefono: +39 333 010 2030. Riunione il 2026-05-08.`,
+  es:`RegexLab — guía rápida de uso
+
+Paso 1: escribe un patrón en la barra superior, entre las dos barras. Empieza simple: \\d+ encuentra todos los números, \\w+ encuentra todas las palabras.
+
+Paso 2: activa los flags g i m s u y a la derecha. Pasa el ratón por cada uno para ver una explicación. "g" encuentra todas las coincidencias, "i" ignora mayúsculas.
+
+Paso 3: escribe aquí, a la izquierda, el texto a probar. Las coincidencias se resaltan en color, en vivo.
+
+Paso 4: usa las pestañas de la derecha — Coincidencias muestra los grupos capturados, Explicación traduce el patrón a lenguaje claro, Reemplazar prueba $1 $2 $&, Código exporta el regex a JS, Python, PHP y Go.
+
+Paso 5: carga patrones listos desde la Biblioteca con un clic; Referencia es una chuleta completa.
+
+Pulsa "Acerca de" para ver el autor y la filosofía trade-free. Todo funciona sin conexión, en el navegador — tu texto nunca sale del dispositivo.
+
+Datos de prueba:
+Correo: hola@trom.tf — código #FFB627.
+Teléfono: +34 600 010 203. Reunión el 2026-05-08.`,
+  pt:`RegexLab — guia rápido de utilização
+
+Passo 1: escreva um padrão na barra de cima, entre as duas barras. Comece simples: \\d+ encontra todos os números, \\w+ encontra todas as palavras.
+
+Passo 2: ative as flags g i m s u y à direita. Passe o rato sobre cada uma para uma explicação. "g" encontra todas as correspondências, "i" ignora maiúsculas.
+
+Passo 3: escreva aqui, à esquerda, o texto a testar. As correspondências são realçadas a cor, ao vivo.
+
+Passo 4: use os separadores à direita — Correspondências mostra os grupos capturados, Explicação traduz o padrão para linguagem clara, Substituir testa $1 $2 $&, Código exporta o regex para JS, Python, PHP e Go.
+
+Passo 5: carregue padrões prontos da Biblioteca com um clique; Referência é um resumo completo.
+
+Carregue em "Sobre" para o autor e a filosofia trade-free. Tudo corre offline, no navegador — o seu texto nunca sai do dispositivo.
+
+Dados de teste:
+E-mail: ola@trom.tf — código #FFB627.
+Telefone: +351 910 010 203. Reunião a 2026-05-08.`,
+  de:`RegexLab — Kurzanleitung
+
+Schritt 1: Gib oben in der Leiste ein Muster ein, zwischen den beiden Schrägstrichen. Fang einfach an: \\d+ findet alle Zahlen, \\w+ findet alle Wörter.
+
+Schritt 2: Schalte rechts die Flags g i m s u y um. Fahre über jedes für eine Erklärung. "g" findet alle Treffer, "i" ignoriert Groß-/Kleinschreibung.
+
+Schritt 3: Schreibe hier links den zu testenden Text. Treffer werden farbig hervorgehoben, in Echtzeit.
+
+Schritt 4: Nutze rechts die Reiter — Treffer zeigt die erfassten Gruppen, Erklärung übersetzt das Muster in Klartext, Ersetzen testet $1 $2 $&, Code exportiert den Regex nach JS, Python, PHP und Go.
+
+Schritt 5: Lade fertige Muster aus der Bibliothek mit einem Klick; Referenz ist ein vollständiger Spickzettel.
+
+Klicke auf "Über" für den Autor und die Trade-free-Philosophie. Alles läuft offline, im Browser — dein Text verlässt nie das Gerät.
+
+Testdaten:
+E-Mail: hallo@trom.tf — Code #FFB627.
+Telefon: +49 151 0102030. Treffen am 2026-05-08.`
+};
+
+/* =========================================================
+   PARSER (tested separately in node)
+   ========================================================= */
+function parsePattern(src){
+  let i=0;const len=src.length;let groupCounter=0;
+  const peek=()=>src[i],eof=()=>i>=len;
+  function parseAlternation(){
+    const options=[parseSequence()];
+    while(!eof()&&peek()==='|'){i++;options.push(parseSequence());}
+    if(options.length===1)return options[0];
+    return[{type:'alternation',options}];
+  }
+  function parseSequence(){
+    const seq=[];
+    while(!eof()&&peek()!=='|'&&peek()!==')'){let atom=parseAtom();if(!atom)break;atom=maybeQuantify(atom);seq.push(atom);}
+    return seq;
+  }
+  function maybeQuantify(atom){
+    const c=peek();let q=null;
+    if(c==='*'){q={min:0,max:Infinity};i++;}
+    else if(c==='+'){q={min:1,max:Infinity};i++;}
+    else if(c==='?'){q={min:0,max:1};i++;}
+    else if(c==='{'){
+      const m=src.slice(i).match(/^\{(\d+)(,(\d*)?)?\}/);
+      if(m){const min=parseInt(m[1],10);let max;
+        if(m[2]===undefined)max=min;else if(m[3]===''||m[3]===undefined)max=Infinity;else max=parseInt(m[3],10);
+        q={min,max};i+=m[0].length;}
+    }
+    if(q){let lazy=false;if(peek()==='?'){lazy=true;i++;}else if(peek()==='+'){i++;}
+      return{type:'quantifier',min:q.min,max:q.max,lazy,child:atom};}
+    return atom;
+  }
+  function parseAtom(){
+    const c=peek();
+    if(c==='(')return parseGroup();
+    if(c==='[')return parseClass();
+    if(c==='\\')return parseEscape();
+    if(c==='.'){i++;return{type:'dot'};}
+    if(c==='^'){i++;return{type:'anchor',kind:'start'};}
+    if(c==='$'){i++;return{type:'anchor',kind:'end'};}
+    i++;return{type:'literal',value:c};
+  }
+  function parseGroup(){
+    i++;let kind='capturing',name=null,groupNum=null;
+    if(peek()==='?'){
+      const rest=src.slice(i);
+      if(rest.startsWith('?:')){kind='noncapturing';i+=2;}
+      else if(rest.startsWith('?=')){kind='lookahead';i+=2;}
+      else if(rest.startsWith('?!')){kind='neglookahead';i+=2;}
+      else if(rest.startsWith('?<=')){kind='lookbehind';i+=3;}
+      else if(rest.startsWith('?<!')){kind='neglookbehind';i+=3;}
+      else{const nm=rest.match(/^\?<([A-Za-z_$][\w$]*)>/);
+        if(nm){kind='named';name=nm[1];i+=nm[0].length;}else{i+=1;}}
+    }
+    if(kind==='capturing'||kind==='named'){groupCounter++;groupNum=groupCounter;}
+    const body=parseAlternation();
+    if(peek()===')')i++;
+    return{type:'group',kind,name,groupNum,body};
+  }
+  function parseClass(){
+    i++;let negated=false;if(peek()==='^'){negated=true;i++;}
+    const items=[];
+    if(peek()===']'){items.push({kind:'char',value:']'});i++;}
+    while(!eof()&&peek()!==']'){
+      if(peek()==='\\'){i++;const e=peek();i++;
+        if('dDwWsS'.includes(e))items.push({kind:'shorthand',value:e});
+        else items.push({kind:'char',value:unescapeChar(e)});continue;}
+      const start=peek();i++;
+      if(peek()==='-'&&src[i+1]!==']'&&!eof()){i++;let end;
+        if(peek()==='\\'){i++;end=unescapeChar(peek());i++;}else{end=peek();i++;}
+        items.push({kind:'range',start,end});}
+      else items.push({kind:'char',value:start});
+    }
+    if(peek()===']')i++;
+    return{type:'class',negated,items};
+  }
+  function parseEscape(){
+    i++;const c=peek();i++;
+    if(/[1-9]/.test(c)){let num=c;while(/[0-9]/.test(peek())){num+=peek();i++;}return{type:'backref',ref:num};}
+    if(c==='k'&&peek()==='<'){const m=src.slice(i).match(/^<([A-Za-z_$][\w$]*)>/);
+      if(m){i+=m[0].length;return{type:'backref',ref:m[1],named:true};}}
+    if(c==='p'||c==='P'){const m=src.slice(i).match(/^\{([^}]+)\}/);
+      if(m){i+=m[0].length;return{type:'prop',value:m[1],negated:c==='P'};}}
+    if('dDwWsS'.includes(c))return{type:'shorthand',value:c};
+    if(c==='b')return{type:'anchor',kind:'wordBoundary'};
+    if(c==='B')return{type:'anchor',kind:'nonWordBoundary'};
+    if(c==='u'){const m=src.slice(i).match(/^\{([0-9a-fA-F]+)\}|^([0-9a-fA-F]{4})/);
+      if(m){i+=m[0].length;return{type:'unicode',value:m[1]||m[2]};}}
+    if(c==='x'){const m=src.slice(i).match(/^[0-9a-fA-F]{2}/);
+      if(m){i+=m[0].length;return{type:'hex',value:m[0]};}}
+    if('nrtfv0'.includes(c))return{type:'escapeChar',value:c};
+    return{type:'literal',value:c,escaped:true};
+  }
+  function unescapeChar(c){return{n:'\n',r:'\r',t:'\t'}[c]||c;}
+  return parseAlternation();
+}
+
+/* group metadata: ordered [{num,name}] for naming match groups robustly */
+function groupMeta(pattern){
+  const list=[];
+  function walk(node){
+    if(Array.isArray(node)){node.forEach(walk);return;}
+    if(!node||typeof node!=='object')return;
+    if(node.type==='group'){
+      if(node.kind==='capturing'||node.kind==='named')list.push({num:node.groupNum,name:node.name});
+      walk(node.body);
+    }else if(node.type==='alternation'){node.options.forEach(walk);}
+    else if(node.type==='quantifier'){walk(node.child);}
+  }
+  try{walk(parsePattern(pattern));}catch(e){}
+  list.sort((a,b)=>a.num-b.num);
+  return list;
+}
+
+/* =========================================================
+   EXPLAINER strings — 7 languages (identical key sets)
+   ========================================================= */
+const EXP={
+  en:{start:'start of input (or line with the m flag)',end:'end of input (or line with the m flag)',
+    wordBoundary:'a word boundary (\\b)',nonWordBoundary:'a non-word-boundary position (\\B)',
+    dot:'any character (except newline, unless the s flag is set)',
+    d:'a digit (0–9)',D:'any non-digit character',w:'a word character (letter, digit or _)',W:'a non-word character',
+    s:'whitespace (space, tab, newline)',S:'any non-whitespace character',
+    classOf:'any one of:',classNotOf:'any character EXCEPT:',noncapturing:'non-capturing group (?:…)',
+    lookahead:'followed by — positive lookahead (?=…)',neglookahead:'NOT followed by — negative lookahead (?!…)',
+    lookbehind:'preceded by — positive lookbehind (?<=…)',neglookbehind:'NOT preceded by — negative lookbehind (?<!…)',
+    alternation:'one of the alternatives:',groupBelow:'the group below',
+    literal:c=>`the literal character “${c}”`,range:(a,b)=>`the range ${a}–${b}`,
+    cap:n=>`capturing group #${n}`,named:(n,nm)=>`capturing group #${n}, named “${nm}”`,variant:n=>`option ${n}`,
+    backref:r=>`a back-reference to group ${r}`,unicode:v=>`the Unicode character U+${v.toUpperCase()}`,hex:v=>`the hex character 0x${v.toUpperCase()}`,
+    prop:v=>`a character with the Unicode property {${v}}`,nprop:v=>`a character WITHOUT the Unicode property {${v}}`,
+    esc:{n:'newline (\\n)',r:'carriage return (\\r)',t:'tab (\\t)',f:'form feed',v:'vertical tab','0':'the NUL character'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='zero or more times';else if(min===1&&max===Infinity)q='one or more times';
+      else if(min===0&&max===1)q='optionally (zero or one time)';else if(min===max)q=`exactly ${min} times`;
+      else if(max===Infinity)q=`at least ${min} times`;else q=`${min} to ${max} times`;
+      return`${d}, repeated ${q}${lazy?' — lazy':''}`;}},
+  ro:{start:'începutul textului (sau al rândului cu flag-ul m)',end:'sfârșitul textului (sau al rândului cu flag-ul m)',
+    wordBoundary:'o limită de cuvânt (\\b)',nonWordBoundary:'o poziție care NU e limită de cuvânt (\\B)',
+    dot:'orice caracter (mai puțin newline, dacă nu e setat flag-ul s)',
+    d:'o cifră (0–9)',D:'orice caracter care nu e cifră',w:'un caracter de cuvânt (literă, cifră sau _)',W:'un caracter care nu e de cuvânt',
+    s:'spațiu alb (spațiu, tab, newline)',S:'orice caracter care nu e spațiu alb',
+    classOf:'oricare dintre:',classNotOf:'orice caracter ÎN AFARĂ de:',noncapturing:'grup fără captură (?:…)',
+    lookahead:'urmat de — lookahead pozitiv (?=…)',neglookahead:'NU urmat de — lookahead negativ (?!…)',
+    lookbehind:'precedat de — lookbehind pozitiv (?<=…)',neglookbehind:'NU precedat de — lookbehind negativ (?<!…)',
+    alternation:'una dintre alternativele:',groupBelow:'grupul de mai jos',
+    literal:c=>`caracterul literal „${c}”`,range:(a,b)=>`intervalul ${a}–${b}`,
+    cap:n=>`grup de captură #${n}`,named:(n,nm)=>`grup de captură #${n}, numit „${nm}”`,variant:n=>`varianta ${n}`,
+    backref:r=>`referință înapoi la grupul ${r}`,unicode:v=>`caracterul Unicode U+${v.toUpperCase()}`,hex:v=>`caracterul hexazecimal 0x${v.toUpperCase()}`,
+    prop:v=>`un caracter cu proprietatea Unicode {${v}}`,nprop:v=>`un caracter FĂRĂ proprietatea Unicode {${v}}`,
+    esc:{n:'newline (\\n)',r:'carriage return (\\r)',t:'tab (\\t)',f:'form feed',v:'tab vertical','0':'caracterul NUL'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='de zero sau mai multe ori';else if(min===1&&max===Infinity)q='de una sau mai multe ori';
+      else if(min===0&&max===1)q='opțional (zero sau o dată)';else if(min===max)q=`de exact ${min} ori`;
+      else if(max===Infinity)q=`de cel puțin ${min} ori`;else q=`de ${min} până la ${max} ori`;
+      return`${d}, repetat ${q}${lazy?' — lazy (minim posibil)':''}`;}},
+  fr:{start:'le début du texte (ou de la ligne avec le drapeau m)',end:'la fin du texte (ou de la ligne avec le drapeau m)',
+    wordBoundary:'une limite de mot (\\b)',nonWordBoundary:'une position qui N’est PAS une limite de mot (\\B)',
+    dot:'n’importe quel caractère (sauf le saut de ligne, sauf si le drapeau s est activé)',
+    d:'un chiffre (0–9)',D:'tout caractère non chiffre',w:'un caractère de mot (lettre, chiffre ou _)',W:'un caractère hors-mot',
+    s:'un espace blanc (espace, tabulation, saut de ligne)',S:'tout caractère non blanc',
+    classOf:'l’un de :',classNotOf:'tout caractère SAUF :',noncapturing:'groupe non capturant (?:…)',
+    lookahead:'suivi de — anticipation positive (?=…)',neglookahead:'NON suivi de — anticipation négative (?!…)',
+    lookbehind:'précédé de — rétrospection positive (?<=…)',neglookbehind:'NON précédé de — rétrospection négative (?<!…)',
+    alternation:'l’une des alternatives :',groupBelow:'le groupe ci-dessous',
+    literal:c=>`le caractère littéral « ${c} »`,range:(a,b)=>`la plage ${a}–${b}`,
+    cap:n=>`groupe de capture nº${n}`,named:(n,nm)=>`groupe de capture nº${n}, nommé « ${nm} »`,variant:n=>`option ${n}`,
+    backref:r=>`une référence arrière au groupe ${r}`,unicode:v=>`le caractère Unicode U+${v.toUpperCase()}`,hex:v=>`le caractère hexadécimal 0x${v.toUpperCase()}`,
+    prop:v=>`un caractère avec la propriété Unicode {${v}}`,nprop:v=>`un caractère SANS la propriété Unicode {${v}}`,
+    esc:{n:'saut de ligne (\\n)',r:'retour chariot (\\r)',t:'tabulation (\\t)',f:'saut de page',v:'tabulation verticale','0':'le caractère NUL'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='zéro fois ou plus';else if(min===1&&max===Infinity)q='une fois ou plus';
+      else if(min===0&&max===1)q='facultativement (zéro ou une fois)';else if(min===max)q=`exactement ${min} fois`;
+      else if(max===Infinity)q=`au moins ${min} fois`;else q=`de ${min} à ${max} fois`;
+      return`${d}, répété ${q}${lazy?' — paresseux (minimal)':''}`;}},
+  it:{start:'inizio del testo (o della riga con il flag m)',end:'fine del testo (o della riga con il flag m)',
+    wordBoundary:'un confine di parola (\\b)',nonWordBoundary:'una posizione che NON è confine di parola (\\B)',
+    dot:'qualsiasi carattere (tranne newline, se non è impostato il flag s)',
+    d:'una cifra (0–9)',D:'qualsiasi carattere non cifra',w:'un carattere di parola (lettera, cifra o _)',W:'un carattere non di parola',
+    s:'spazio bianco (spazio, tab, newline)',S:'qualsiasi carattere non spazio',
+    classOf:'uno tra:',classNotOf:'qualsiasi carattere TRANNE:',noncapturing:'gruppo non catturante (?:…)',
+    lookahead:'seguito da — lookahead positivo (?=…)',neglookahead:'NON seguito da — lookahead negativo (?!…)',
+    lookbehind:'preceduto da — lookbehind positivo (?<=…)',neglookbehind:'NON preceduto da — lookbehind negativo (?<!…)',
+    alternation:'una delle alternative:',groupBelow:'il gruppo qui sotto',
+    literal:c=>`il carattere letterale “${c}”`,range:(a,b)=>`l’intervallo ${a}–${b}`,
+    cap:n=>`gruppo di cattura n.${n}`,named:(n,nm)=>`gruppo di cattura n.${n}, di nome “${nm}”`,variant:n=>`opzione ${n}`,
+    backref:r=>`un riferimento all’indietro al gruppo ${r}`,unicode:v=>`il carattere Unicode U+${v.toUpperCase()}`,hex:v=>`il carattere esadecimale 0x${v.toUpperCase()}`,
+    prop:v=>`un carattere con la proprietà Unicode {${v}}`,nprop:v=>`un carattere SENZA la proprietà Unicode {${v}}`,
+    esc:{n:'newline (\\n)',r:'ritorno a capo (\\r)',t:'tab (\\t)',f:'avanzamento pagina',v:'tab verticale','0':'il carattere NUL'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='zero o più volte';else if(min===1&&max===Infinity)q='una o più volte';
+      else if(min===0&&max===1)q='facoltativamente (zero o una volta)';else if(min===max)q=`esattamente ${min} volte`;
+      else if(max===Infinity)q=`almeno ${min} volte`;else q=`da ${min} a ${max} volte`;
+      return`${d}, ripetuto ${q}${lazy?' — lazy (minimo)':''}`;}},
+  es:{start:'el inicio del texto (o de la línea con el flag m)',end:'el final del texto (o de la línea con el flag m)',
+    wordBoundary:'un límite de palabra (\\b)',nonWordBoundary:'una posición que NO es límite de palabra (\\B)',
+    dot:'cualquier carácter (excepto salto de línea, salvo que esté activo el flag s)',
+    d:'un dígito (0–9)',D:'cualquier carácter que no sea dígito',w:'un carácter de palabra (letra, dígito o _)',W:'un carácter que no es de palabra',
+    s:'espacio en blanco (espacio, tab, salto de línea)',S:'cualquier carácter que no sea espacio',
+    classOf:'uno de:',classNotOf:'cualquier carácter EXCEPTO:',noncapturing:'grupo sin captura (?:…)',
+    lookahead:'seguido de — anticipación positiva (?=…)',neglookahead:'NO seguido de — anticipación negativa (?!…)',
+    lookbehind:'precedido de — retrospección positiva (?<=…)',neglookbehind:'NO precedido de — retrospección negativa (?<!…)',
+    alternation:'una de las alternativas:',groupBelow:'el grupo de abajo',
+    literal:c=>`el carácter literal «${c}»`,range:(a,b)=>`el rango ${a}–${b}`,
+    cap:n=>`grupo de captura n.º${n}`,named:(n,nm)=>`grupo de captura n.º${n}, llamado «${nm}»`,variant:n=>`opción ${n}`,
+    backref:r=>`una retro-referencia al grupo ${r}`,unicode:v=>`el carácter Unicode U+${v.toUpperCase()}`,hex:v=>`el carácter hexadecimal 0x${v.toUpperCase()}`,
+    prop:v=>`un carácter con la propiedad Unicode {${v}}`,nprop:v=>`un carácter SIN la propiedad Unicode {${v}}`,
+    esc:{n:'salto de línea (\\n)',r:'retorno de carro (\\r)',t:'tabulación (\\t)',f:'avance de página',v:'tabulación vertical','0':'el carácter NUL'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='cero o más veces';else if(min===1&&max===Infinity)q='una o más veces';
+      else if(min===0&&max===1)q='opcionalmente (cero o una vez)';else if(min===max)q=`exactamente ${min} veces`;
+      else if(max===Infinity)q=`al menos ${min} veces`;else q=`de ${min} a ${max} veces`;
+      return`${d}, repetido ${q}${lazy?' — perezoso (mínimo)':''}`;}},
+  pt:{start:'o início do texto (ou da linha com a flag m)',end:'o fim do texto (ou da linha com a flag m)',
+    wordBoundary:'um limite de palavra (\\b)',nonWordBoundary:'uma posição que NÃO é limite de palavra (\\B)',
+    dot:'qualquer carácter (exceto newline, a menos que a flag s esteja ativa)',
+    d:'um dígito (0–9)',D:'qualquer carácter que não seja dígito',w:'um carácter de palavra (letra, dígito ou _)',W:'um carácter que não é de palavra',
+    s:'espaço em branco (espaço, tab, newline)',S:'qualquer carácter que não seja espaço',
+    classOf:'um de:',classNotOf:'qualquer carácter EXCETO:',noncapturing:'grupo sem captura (?:…)',
+    lookahead:'seguido de — antecipação positiva (?=…)',neglookahead:'NÃO seguido de — antecipação negativa (?!…)',
+    lookbehind:'precedido de — retrospeção positiva (?<=…)',neglookbehind:'NÃO precedido de — retrospeção negativa (?<!…)',
+    alternation:'uma das alternativas:',groupBelow:'o grupo abaixo',
+    literal:c=>`o carácter literal “${c}”`,range:(a,b)=>`o intervalo ${a}–${b}`,
+    cap:n=>`grupo de captura n.º${n}`,named:(n,nm)=>`grupo de captura n.º${n}, chamado “${nm}”`,variant:n=>`opção ${n}`,
+    backref:r=>`uma retro-referência ao grupo ${r}`,unicode:v=>`o carácter Unicode U+${v.toUpperCase()}`,hex:v=>`o carácter hexadecimal 0x${v.toUpperCase()}`,
+    prop:v=>`um carácter com a propriedade Unicode {${v}}`,nprop:v=>`um carácter SEM a propriedade Unicode {${v}}`,
+    esc:{n:'newline (\\n)',r:'retorno de carro (\\r)',t:'tab (\\t)',f:'avanço de página',v:'tab vertical','0':'o carácter NUL'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='zero ou mais vezes';else if(min===1&&max===Infinity)q='uma ou mais vezes';
+      else if(min===0&&max===1)q='opcionalmente (zero ou uma vez)';else if(min===max)q=`exatamente ${min} vezes`;
+      else if(max===Infinity)q=`pelo menos ${min} vezes`;else q=`de ${min} a ${max} vezes`;
+      return`${d}, repetido ${q}${lazy?' — lazy (mínimo)':''}`;}},
+  de:{start:'der Anfang des Textes (oder der Zeile mit dem m-Flag)',end:'das Ende des Textes (oder der Zeile mit dem m-Flag)',
+    wordBoundary:'eine Wortgrenze (\\b)',nonWordBoundary:'eine Position, die KEINE Wortgrenze ist (\\B)',
+    dot:'ein beliebiges Zeichen (außer Zeilenumbruch, sofern das s-Flag nicht gesetzt ist)',
+    d:'eine Ziffer (0–9)',D:'ein beliebiges Nicht-Ziffern-Zeichen',w:'ein Wortzeichen (Buchstabe, Ziffer oder _)',W:'ein Nicht-Wortzeichen',
+    s:'ein Leerraum (Leerzeichen, Tab, Zeilenumbruch)',S:'ein beliebiges Nicht-Leerraum-Zeichen',
+    classOf:'eines von:',classNotOf:'jedes Zeichen AUSSER:',noncapturing:'nicht erfassende Gruppe (?:…)',
+    lookahead:'gefolgt von — positiver Lookahead (?=…)',neglookahead:'NICHT gefolgt von — negativer Lookahead (?!…)',
+    lookbehind:'vorangestellt von — positiver Lookbehind (?<=…)',neglookbehind:'NICHT vorangestellt von — negativer Lookbehind (?<!…)',
+    alternation:'eine der Alternativen:',groupBelow:'die Gruppe unten',
+    literal:c=>`das wörtliche Zeichen „${c}“`,range:(a,b)=>`der Bereich ${a}–${b}`,
+    cap:n=>`erfassende Gruppe #${n}`,named:(n,nm)=>`erfassende Gruppe #${n}, benannt „${nm}“`,variant:n=>`Option ${n}`,
+    backref:r=>`ein Rückverweis auf Gruppe ${r}`,unicode:v=>`das Unicode-Zeichen U+${v.toUpperCase()}`,hex:v=>`das Hex-Zeichen 0x${v.toUpperCase()}`,
+    prop:v=>`ein Zeichen mit der Unicode-Eigenschaft {${v}}`,nprop:v=>`ein Zeichen OHNE die Unicode-Eigenschaft {${v}}`,
+    esc:{n:'Zeilenumbruch (\\n)',r:'Wagenrücklauf (\\r)',t:'Tab (\\t)',f:'Seitenvorschub',v:'vertikaler Tab','0':'das NUL-Zeichen'},
+    quant:(d,min,max,lazy)=>{let q;if(min===0&&max===Infinity)q='null- oder mehrmals';else if(min===1&&max===Infinity)q='ein- oder mehrmals';
+      else if(min===0&&max===1)q='optional (null- oder einmal)';else if(min===max)q=`genau ${min}-mal`;
+      else if(max===Infinity)q=`mindestens ${min}-mal`;else q=`${min}- bis ${max}-mal`;
+      return`${d}, wiederholt ${q}${lazy?' — lazy (minimal)':''}`;}}
+};
+
+function describeNode(node,lang,depth,out){
+  const t=EXP[lang];
+  if(Array.isArray(node)){for(const n of node)describeNode(n,lang,depth,out);return out;}
+  const push=(d,text,cls)=>out.push({depth:d,text,cls});
+  switch(node.type){
+    case'literal':push(depth,t.literal(node.value===' '?'␣':node.value));break;
+    case'dot':push(depth,t.dot);break;
+    case'anchor':push(depth,t[node.kind]);break;
+    case'shorthand':push(depth,t[node.value]);break;
+    case'unicode':push(depth,t.unicode(node.value));break;
+    case'hex':push(depth,t.hex(node.value));break;
+    case'prop':push(depth,node.negated?t.nprop(node.value):t.prop(node.value));break;
+    case'escapeChar':push(depth,t.esc[node.value]||node.value);break;
+    case'backref':push(depth,t.backref(node.ref));break;
+    case'class':{
+      const list=node.items.map(it=>{
+        if(it.kind==='char')return `‹${it.value===' '?'␣':it.value}›`;
+        if(it.kind==='range')return t.range(it.start,it.end);
+        if(it.kind==='shorthand')return t[it.value];return'';});
+      push(depth,(node.negated?t.classNotOf:t.classOf)+' '+list.join(', '));break;}
+    case'group':{
+      const label=node.kind==='capturing'?t.cap(node.groupNum)
+        :node.kind==='named'?t.named(node.groupNum,node.name):t[node.kind]||t.noncapturing;
+      push(depth,label+':');describeNode(node.body,lang,depth+1,out);break;}
+    case'alternation':{
+      push(depth,t.alternation);
+      node.options.forEach((opt,idx)=>{push(depth+1,t.variant(idx+1),'alt');describeNode(opt,lang,depth+1,out);});break;}
+    case'quantifier':{
+      const tmp=[];describeNode(node.child,lang,depth,tmp);
+      if(tmp.length===1)push(depth,t.quant(tmp[0].text,node.min,node.max,node.lazy));
+      else{push(depth,t.quant(t.groupBelow,node.min,node.max,node.lazy)+':');
+        tmp.forEach(d=>out.push({depth:d.depth+1,text:d.text,cls:d.cls}));}break;}
+  }
+  return out;
+}
+function explain(pattern,lang){
+  if(!pattern)return null;
+  try{return describeNode(parsePattern(pattern),lang,0,[]);}catch(e){return null;}
+}
+
+/* =========================================================
+   LIBRARY (RO-aware, names/desc in 7 languages)
+   ========================================================= */
+const LIBRARY=[
+  {cat:{en:'Identity & contact',ro:'Identitate & contact',fr:'Identité & contact',it:'Identità & contatto',es:'Identidad y contacto',pt:'Identidade e contacto',de:'Identität & Kontakt'},items:[
+    {re:'[\\w.+-]+@[\\w-]+\\.[\\w.-]+',flags:'g',
+      name:{en:'Email address',ro:'Adresă e-mail',fr:'Adresse e-mail',it:'Indirizzo e-mail',es:'Correo electrónico',pt:'Endereço de e-mail',de:'E-Mail-Adresse'},
+      desc:{en:'General-purpose email matching.',ro:'Potrivire generală pentru adrese de e-mail.',fr:'Détection générale d’adresses e-mail.',it:'Corrispondenza generale per e-mail.',es:'Coincidencia general de correos.',pt:'Correspondência geral de e-mails.',de:'Allgemeine E-Mail-Erkennung.'}},
+    {re:'https?:\\/\\/[^\\s/$.?#].[^\\s]*',flags:'gi',
+      name:{en:'URL (http/https)',ro:'URL (http/https)',fr:'URL (http/https)',it:'URL (http/https)',es:'URL (http/https)',pt:'URL (http/https)',de:'URL (http/https)'},
+      desc:{en:'Web links with or without https.',ro:'Linkuri web cu sau fără https.',fr:'Liens web avec ou sans https.',it:'Link web con o senza https.',es:'Enlaces web con o sin https.',pt:'Ligações web com ou sem https.',de:'Weblinks mit oder ohne https.'}},
+    {re:'(?:\\+40|0)7\\d{2}[\\s.-]?\\d{3}[\\s.-]?\\d{3}',flags:'g',
+      name:{en:'Romanian phone',ro:'Telefon România',fr:'Téléphone roumain',it:'Telefono rumeno',es:'Teléfono rumano',pt:'Telefone romeno',de:'Rumänische Telefonnummer'},
+      desc:{en:'RO mobile numbers (07xx), optional +40 prefix.',ro:'Numere mobile RO (07xx), prefix +40 opțional.',fr:'Mobiles RO (07xx), préfixe +40 facultatif.',it:'Cellulari RO (07xx), prefisso +40 facoltativo.',es:'Móviles RO (07xx), prefijo +40 opcional.',pt:'Móveis RO (07xx), prefixo +40 opcional.',de:'RO-Mobilnummern (07xx), +40 optional.'}},
+    {re:'\\b[1-8]\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{6}\\b',flags:'g',
+      name:{en:'Romanian CNP (13 digits)',ro:'CNP (13 cifre)',fr:'CNP roumain (13 chiffres)',it:'CNP rumeno (13 cifre)',es:'CNP rumano (13 dígitos)',pt:'CNP romeno (13 dígitos)',de:'Rumänische CNP (13 Ziffern)'},
+      desc:{en:'Romanian personal numeric code structure.',ro:'Cod Numeric Personal — structură S-AA-LL-ZZ + 6 cifre.',fr:'Code numérique personnel roumain.',it:'Codice numerico personale rumeno.',es:'Código numérico personal rumano.',pt:'Código numérico pessoal romeno.',de:'Rumänischer persönlicher Zahlencode.'}},
+    {re:'\\bRO\\d{2}[A-Z]{4}[A-Z0-9]{16}\\b',flags:'gi',
+      name:{en:'Romanian IBAN',ro:'IBAN România',fr:'IBAN roumain',it:'IBAN rumeno',es:'IBAN rumano',pt:'IBAN romeno',de:'Rumänische IBAN'},
+      desc:{en:'RO IBAN: RO + 2 check + 4 bank + 16.',ro:'IBAN RO: RO + 2 cifre + 4 litere bancă + 16.',fr:'IBAN RO : RO + 2 + 4 banque + 16.',it:'IBAN RO: RO + 2 + 4 banca + 16.',es:'IBAN RO: RO + 2 + 4 banco + 16.',pt:'IBAN RO: RO + 2 + 4 banco + 16.',de:'RO-IBAN: RO + 2 + 4 Bank + 16.'}},
+  ]},
+  {cat:{en:'Dates & numbers',ro:'Date & numere',fr:'Dates & nombres',it:'Date & numeri',es:'Fechas y números',pt:'Datas e números',de:'Daten & Zahlen'},items:[
+    {re:'\\b(\\d{4})-(\\d{2})-(\\d{2})\\b',flags:'g',
+      name:{en:'ISO date (YYYY-MM-DD)',ro:'Dată ISO (AAAA-LL-ZZ)',fr:'Date ISO (AAAA-MM-JJ)',it:'Data ISO (AAAA-MM-GG)',es:'Fecha ISO (AAAA-MM-DD)',pt:'Data ISO (AAAA-MM-DD)',de:'ISO-Datum (JJJJ-MM-TT)'},
+      desc:{en:'Captures year / month / day in three groups.',ro:'Captură an / lună / zi în trei grupuri.',fr:'Capture année / mois / jour.',it:'Cattura anno / mese / giorno.',es:'Captura año / mes / día.',pt:'Captura ano / mês / dia.',de:'Erfasst Jahr / Monat / Tag.'}},
+    {re:'-?\\d+',flags:'g',
+      name:{en:'Signed integer',ro:'Număr întreg cu semn',fr:'Entier signé',it:'Intero con segno',es:'Entero con signo',pt:'Inteiro com sinal',de:'Vorzeichenbehaftete Ganzzahl'},
+      desc:{en:'Positive or negative integers.',ro:'Numere întregi pozitive sau negative.',fr:'Entiers positifs ou négatifs.',it:'Interi positivi o negativi.',es:'Enteros positivos o negativos.',pt:'Inteiros positivos ou negativos.',de:'Positive oder negative Ganzzahlen.'}},
+    {re:'-?\\d+(?:[.,]\\d+)?',flags:'g',
+      name:{en:'Decimal number',ro:'Număr zecimal',fr:'Nombre décimal',it:'Numero decimale',es:'Número decimal',pt:'Número decimal',de:'Dezimalzahl'},
+      desc:{en:'Accepts dot or comma as separator.',ro:'Acceptă punct sau virgulă ca separator.',fr:'Accepte point ou virgule.',it:'Accetta punto o virgola.',es:'Acepta punto o coma.',pt:'Aceita ponto ou vírgula.',de:'Punkt oder Komma als Trenner.'}},
+    {re:'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\\b',flags:'g',
+      name:{en:'HEX color',ro:'Culoare HEX',fr:'Couleur HEX',it:'Colore HEX',es:'Color HEX',pt:'Cor HEX',de:'HEX-Farbe'},
+      desc:{en:'3- or 6-digit hex color code.',ro:'Cod de culoare pe 3 sau 6 cifre hex.',fr:'Code couleur hex 3 ou 6 chiffres.',it:'Codice colore hex 3 o 6 cifre.',es:'Código de color hex 3 o 6 dígitos.',pt:'Código de cor hex 3 ou 6 dígitos.',de:'Hex-Farbcode mit 3 oder 6 Ziffern.'}},
+    {re:'\\b(?:25[0-5]|2[0-4]\\d|1?\\d?\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1?\\d?\\d)){3}\\b',flags:'g',
+      name:{en:'IPv4 address',ro:'Adresă IPv4',fr:'Adresse IPv4',it:'Indirizzo IPv4',es:'Dirección IPv4',pt:'Endereço IPv4',de:'IPv4-Adresse'},
+      desc:{en:'IPv4 with 0–255 octet validation.',ro:'IPv4 cu validarea octeților 0–255.',fr:'IPv4 avec validation 0–255.',it:'IPv4 con validazione 0–255.',es:'IPv4 con validación 0–255.',pt:'IPv4 com validação 0–255.',de:'IPv4 mit Oktett-Prüfung 0–255.'}},
+  ]},
+  {cat:{en:'Text & structure',ro:'Text & structură',fr:'Texte & structure',it:'Testo & struttura',es:'Texto y estructura',pt:'Texto e estrutura',de:'Text & Struktur'},items:[
+    {re:'\\b[A-Za-zăâîșțĂÂÎȘȚ]+\\b',flags:'gu',
+      name:{en:'Word with RO diacritics',ro:'Cuvânt cu diacritice RO',fr:'Mot avec diacritiques RO',it:'Parola con diacritici RO',es:'Palabra con diacríticos RO',pt:'Palavra com diacríticos RO',de:'Wort mit RO-Diakritika'},
+      desc:{en:'Words including Romanian diacritics.',ro:'Cuvinte care includ ă â î ș ț.',fr:'Mots avec diacritiques roumains.',it:'Parole con diacritici rumeni.',es:'Palabras con diacríticos rumanos.',pt:'Palavras com diacríticos romenos.',de:'Wörter mit rumänischen Diakritika.'}},
+    {re:'<\\/?([a-zA-Z][a-zA-Z0-9]*)\\b[^>]*>',flags:'g',
+      name:{en:'HTML tag',ro:'Etichetă HTML',fr:'Balise HTML',it:'Tag HTML',es:'Etiqueta HTML',pt:'Etiqueta HTML',de:'HTML-Tag'},
+      desc:{en:'Opening and closing tags.',ro:'Taguri de deschidere și închidere.',fr:'Balises ouvrantes et fermantes.',it:'Tag di apertura e chiusura.',es:'Etiquetas de apertura y cierre.',pt:'Etiquetas de abertura e fecho.',de:'Öffnende und schließende Tags.'}},
+    {re:'#[A-Za-z0-9_]+',flags:'g',
+      name:{en:'Hashtag',ro:'Hashtag',fr:'Hashtag',it:'Hashtag',es:'Hashtag',pt:'Hashtag',de:'Hashtag'},
+      desc:{en:'#example style tags.',ro:'Etichete de tip #exemplu.',fr:'Étiquettes de type #exemple.',it:'Tag tipo #esempio.',es:'Etiquetas tipo #ejemplo.',pt:'Etiquetas tipo #exemplo.',de:'Tags vom Typ #beispiel.'}},
+    {re:'\\s{2,}',flags:'g',
+      name:{en:'Multiple spaces',ro:'Spații multiple',fr:'Espaces multiples',it:'Spazi multipli',es:'Espacios múltiples',pt:'Espaços múltiplos',de:'Mehrfache Leerzeichen'},
+      desc:{en:'Useful for whitespace normalisation.',ro:'Util pentru normalizarea spațiilor.',fr:'Utile pour normaliser les espaces.',it:'Utile per normalizzare gli spazi.',es:'Útil para normalizar espacios.',pt:'Útil para normalizar espaços.',de:'Nützlich zur Leerraum-Normalisierung.'}},
+    {re:'^[a-z0-9]+(?:-[a-z0-9]+)*$',flags:'',
+      name:{en:'Slug (URL-friendly)',ro:'Slug (URL-friendly)',fr:'Slug (adapté aux URL)',it:'Slug (per URL)',es:'Slug (apto para URL)',pt:'Slug (para URL)',de:'Slug (URL-tauglich)'},
+      desc:{en:'Validates a hyphenated slug.',ro:'Validează un slug cu cratime.',fr:'Valide un slug avec tirets.',it:'Valida uno slug con trattini.',es:'Valida un slug con guiones.',pt:'Valida um slug com hífens.',de:'Validiert einen Slug mit Bindestrichen.'}},
+  ]},
+];
+
+/* =========================================================
+   CHEATSHEET — 7 languages
+   ========================================================= */
+const CHEAT={
+  en:[
+    {cat:'Character classes',rows:[['.','any char except newline'],['\\d','digit (0–9)'],['\\D','non-digit'],['\\w','letter, digit or _'],['\\W','non-word'],['\\s','whitespace'],['\\S','non-whitespace'],['[abc]','a, b or c'],['[^abc]','anything but a, b, c'],['[a-z]','range a→z']]},
+    {cat:'Anchors & boundaries',rows:[['^','start of input/line'],['$','end of input/line'],['\\b','word boundary'],['\\B','non-word-boundary']]},
+    {cat:'Quantifiers',rows:[['*','0 or more'],['+','1 or more'],['?','0 or 1 (optional)'],['{n}','exactly n'],['{n,}','at least n'],['{n,m}','between n and m'],['*?  +?','lazy (minimal)']]},
+    {cat:'Groups & alternation',rows:[['(…)','capturing group'],['(?:…)','non-capturing group'],['(?<n>…)','named group'],['a|b','a or b'],['\\1','back-reference'],['(?=…)','positive lookahead'],['(?!…)','negative lookahead'],['(?<=…)','positive lookbehind'],['(?<!…)','negative lookbehind']]},
+    {cat:'Unicode & flags',rows:[['\\uFFFF','Unicode code point'],['\\p{L}','Unicode property (u flag)'],['g','all matches'],['i','ignore case'],['m','multiline'],['s','. matches newline'],['u','unicode'],['y','sticky']]},
+  ],
+  ro:[
+    {cat:'Clase de caractere',rows:[['.','orice caracter, exceptând newline'],['\\d','cifră (0–9)'],['\\D','non-cifră'],['\\w','literă, cifră sau _'],['\\W','non-cuvânt'],['\\s','spațiu alb'],['\\S','non-spațiu'],['[abc]','a, b sau c'],['[^abc]','orice în afară de a, b, c'],['[a-z]','interval a→z']]},
+    {cat:'Ancore & limite',rows:[['^','început de text/rând'],['$','sfârșit de text/rând'],['\\b','limită de cuvânt'],['\\B','non-limită de cuvânt']]},
+    {cat:'Cuantificatori',rows:[['*','0 sau mai multe'],['+','1 sau mai multe'],['?','0 sau 1 (opțional)'],['{n}','exact n'],['{n,}','cel puțin n'],['{n,m}','între n și m'],['*?  +?','versiune lazy (minim)']]},
+    {cat:'Grupuri & alternative',rows:[['(…)','grup de captură'],['(?:…)','grup fără captură'],['(?<n>…)','grup numit'],['a|b','a sau b'],['\\1','referință înapoi'],['(?=…)','lookahead pozitiv'],['(?!…)','lookahead negativ'],['(?<=…)','lookbehind pozitiv'],['(?<!…)','lookbehind negativ']]},
+    {cat:'Unicode & flag-uri',rows:[['\\uFFFF','punct de cod Unicode'],['\\p{L}','proprietate Unicode (flag u)'],['g','toate potrivirile'],['i','ignoră majuscule'],['m','multilinie'],['s','. include newline'],['u','unicode'],['y','sticky']]},
+  ],
+  fr:[
+    {cat:'Classes de caractères',rows:[['.','tout caractère sauf saut de ligne'],['\\d','chiffre (0–9)'],['\\D','non-chiffre'],['\\w','lettre, chiffre ou _'],['\\W','hors-mot'],['\\s','espace blanc'],['\\S','non-blanc'],['[abc]','a, b ou c'],['[^abc]','tout sauf a, b, c'],['[a-z]','plage a→z']]},
+    {cat:'Ancres & limites',rows:[['^','début de texte/ligne'],['$','fin de texte/ligne'],['\\b','limite de mot'],['\\B','non-limite de mot']]},
+    {cat:'Quantificateurs',rows:[['*','0 ou plus'],['+','1 ou plus'],['?','0 ou 1 (facultatif)'],['{n}','exactement n'],['{n,}','au moins n'],['{n,m}','entre n et m'],['*?  +?','paresseux (minimal)']]},
+    {cat:'Groupes & alternance',rows:[['(…)','groupe de capture'],['(?:…)','groupe non capturant'],['(?<n>…)','groupe nommé'],['a|b','a ou b'],['\\1','référence arrière'],['(?=…)','anticipation positive'],['(?!…)','anticipation négative'],['(?<=…)','rétrospection positive'],['(?<!…)','rétrospection négative']]},
+    {cat:'Unicode & drapeaux',rows:[['\\uFFFF','point de code Unicode'],['\\p{L}','propriété Unicode (drapeau u)'],['g','toutes les correspondances'],['i','ignorer la casse'],['m','multiligne'],['s','. inclut le saut de ligne'],['u','unicode'],['y','sticky']]},
+  ],
+  it:[
+    {cat:'Classi di caratteri',rows:[['.','qualsiasi carattere tranne newline'],['\\d','cifra (0–9)'],['\\D','non cifra'],['\\w','lettera, cifra o _'],['\\W','non di parola'],['\\s','spazio bianco'],['\\S','non spazio'],['[abc]','a, b o c'],['[^abc]','tutto tranne a, b, c'],['[a-z]','intervallo a→z']]},
+    {cat:'Ancore & confini',rows:[['^','inizio testo/riga'],['$','fine testo/riga'],['\\b','confine di parola'],['\\B','non confine di parola']]},
+    {cat:'Quantificatori',rows:[['*','0 o più'],['+','1 o più'],['?','0 o 1 (facoltativo)'],['{n}','esattamente n'],['{n,}','almeno n'],['{n,m}','tra n e m'],['*?  +?','lazy (minimo)']]},
+    {cat:'Gruppi & alternanza',rows:[['(…)','gruppo di cattura'],['(?:…)','gruppo non catturante'],['(?<n>…)','gruppo con nome'],['a|b','a o b'],['\\1','riferimento all’indietro'],['(?=…)','lookahead positivo'],['(?!…)','lookahead negativo'],['(?<=…)','lookbehind positivo'],['(?<!…)','lookbehind negativo']]},
+    {cat:'Unicode & flag',rows:[['\\uFFFF','punto di codice Unicode'],['\\p{L}','proprietà Unicode (flag u)'],['g','tutte le corrispondenze'],['i','ignora maiuscole'],['m','multilinea'],['s','. include newline'],['u','unicode'],['y','sticky']]},
+  ],
+  es:[
+    {cat:'Clases de caracteres',rows:[['.','cualquier carácter excepto newline'],['\\d','dígito (0–9)'],['\\D','no dígito'],['\\w','letra, dígito o _'],['\\W','no de palabra'],['\\s','espacio en blanco'],['\\S','no espacio'],['[abc]','a, b o c'],['[^abc]','todo menos a, b, c'],['[a-z]','rango a→z']]},
+    {cat:'Anclas y límites',rows:[['^','inicio de texto/línea'],['$','fin de texto/línea'],['\\b','límite de palabra'],['\\B','no límite de palabra']]},
+    {cat:'Cuantificadores',rows:[['*','0 o más'],['+','1 o más'],['?','0 o 1 (opcional)'],['{n}','exactamente n'],['{n,}','al menos n'],['{n,m}','entre n y m'],['*?  +?','perezoso (mínimo)']]},
+    {cat:'Grupos y alternancia',rows:[['(…)','grupo de captura'],['(?:…)','grupo sin captura'],['(?<n>…)','grupo con nombre'],['a|b','a o b'],['\\1','retro-referencia'],['(?=…)','anticipación positiva'],['(?!…)','anticipación negativa'],['(?<=…)','retrospección positiva'],['(?<!…)','retrospección negativa']]},
+    {cat:'Unicode y flags',rows:[['\\uFFFF','punto de código Unicode'],['\\p{L}','propiedad Unicode (flag u)'],['g','todas las coincidencias'],['i','ignorar mayúsculas'],['m','multilínea'],['s','. incluye newline'],['u','unicode'],['y','sticky']]},
+  ],
+  pt:[
+    {cat:'Classes de caracteres',rows:[['.','qualquer carácter exceto newline'],['\\d','dígito (0–9)'],['\\D','não dígito'],['\\w','letra, dígito ou _'],['\\W','não de palavra'],['\\s','espaço em branco'],['\\S','não espaço'],['[abc]','a, b ou c'],['[^abc]','tudo exceto a, b, c'],['[a-z]','intervalo a→z']]},
+    {cat:'Âncoras & limites',rows:[['^','início de texto/linha'],['$','fim de texto/linha'],['\\b','limite de palavra'],['\\B','não limite de palavra']]},
+    {cat:'Quantificadores',rows:[['*','0 ou mais'],['+','1 ou mais'],['?','0 ou 1 (opcional)'],['{n}','exatamente n'],['{n,}','pelo menos n'],['{n,m}','entre n e m'],['*?  +?','lazy (mínimo)']]},
+    {cat:'Grupos & alternância',rows:[['(…)','grupo de captura'],['(?:…)','grupo sem captura'],['(?<n>…)','grupo nomeado'],['a|b','a ou b'],['\\1','retro-referência'],['(?=…)','antecipação positiva'],['(?!…)','antecipação negativa'],['(?<=…)','retrospeção positiva'],['(?<!…)','retrospeção negativa']]},
+    {cat:'Unicode & flags',rows:[['\\uFFFF','ponto de código Unicode'],['\\p{L}','propriedade Unicode (flag u)'],['g','todas as correspondências'],['i','ignora maiúsculas'],['m','multilinha'],['s','. inclui newline'],['u','unicode'],['y','sticky']]},
+  ],
+  de:[
+    {cat:'Zeichenklassen',rows:[['.','jedes Zeichen außer Zeilenumbruch'],['\\d','Ziffer (0–9)'],['\\D','keine Ziffer'],['\\w','Buchstabe, Ziffer oder _'],['\\W','Nicht-Wort'],['\\s','Leerraum'],['\\S','kein Leerraum'],['[abc]','a, b oder c'],['[^abc]','alles außer a, b, c'],['[a-z]','Bereich a→z']]},
+    {cat:'Anker & Grenzen',rows:[['^','Anfang Text/Zeile'],['$','Ende Text/Zeile'],['\\b','Wortgrenze'],['\\B','keine Wortgrenze']]},
+    {cat:'Quantoren',rows:[['*','0 oder mehr'],['+','1 oder mehr'],['?','0 oder 1 (optional)'],['{n}','genau n'],['{n,}','mindestens n'],['{n,m}','zwischen n und m'],['*?  +?','lazy (minimal)']]},
+    {cat:'Gruppen & Alternation',rows:[['(…)','erfassende Gruppe'],['(?:…)','nicht erfassende Gruppe'],['(?<n>…)','benannte Gruppe'],['a|b','a oder b'],['\\1','Rückverweis'],['(?=…)','positiver Lookahead'],['(?!…)','negativer Lookahead'],['(?<=…)','positiver Lookbehind'],['(?<!…)','negativer Lookbehind']]},
+    {cat:'Unicode & Flags',rows:[['\\uFFFF','Unicode-Codepunkt'],['\\p{L}','Unicode-Eigenschaft (u-Flag)'],['g','alle Treffer'],['i','Groß/Klein ignorieren'],['m','mehrzeilig'],['s','. trifft newline'],['u','unicode'],['y','sticky']]},
+  ],
+};
+
+/* =========================================================
+   MATCHING CORE — shared by worker and sync fallback.
+   Self-contained (no outer refs) so it stringifies cleanly.
+   ========================================================= */
+function doMatch(pattern,flags,subject,replaceStr){
+  var res={matches:[],replaced:null,error:null,replaceError:null,capped:false};
+  if(!pattern){return res;}
+  var scanFlags=flags.replace('y','');
+  if(scanFlags.indexOf('g')<0)scanFlags+='g';
+  try{
+    var re=new RegExp(pattern,scanFlags);
+    var m,guard=0;re.lastIndex=0;
+    while((m=re.exec(subject))!==null){
+      var groups=[];for(var k=1;k<m.length;k++){groups.push(m[k]===undefined?null:m[k]);}
+      var named=null;if(m.groups){named={};for(var key in m.groups){named[key]=m.groups[key]===undefined?null:m.groups[key];}}
+      res.matches.push({index:m.index,text:m[0],groups:groups,named:named});
+      if(m.index===re.lastIndex)re.lastIndex++;
+      if(++guard>20000){res.capped=true;break;}
+    }
+  }catch(e){res.error=e.message;return res;}
+  try{var rre=new RegExp(pattern,flags);res.replaced=subject.replace(rre,replaceStr);}
+  catch(e){res.replaceError=e.message;}
+  return res;
+}
+
+/* ---------- worker setup with sync fallback ---------- */
+var worker=null,useWorker=false;
+var workerSource='const doMatch='+doMatch.toString()+';self.onmessage=function(e){var d=e.data;var r=doMatch(d.pattern,d.flags,d.subject,d.replaceStr);r.jobId=d.jobId;self.postMessage(r);};';
+function spawnWorker(){
+  try{
+    var blob=new Blob([workerSource],{type:'application/javascript'});
+    worker=new Worker(URL.createObjectURL(blob));
+    worker.onmessage=onWorkerMessage;
+    worker.onerror=function(){useWorker=false;};
+    useWorker=true;
+  }catch(e){useWorker=false;worker=null;}
+}
+
+/* =========================================================
+   STATE & DOM
+   ========================================================= */
+const FLAGS=['g','i','m','s','u','y'];
+const TIMEOUT=1500;
+const RENDER_CAP=500;
+let LANG='en';
+let activeFlags=new Set(['g']);
+let activeTab='matches';
+let currentJob=0,watchdog=null;
+let lastResult=null;
+
+const $=id=>document.getElementById(id);
+const patternEl=$('pattern'),subjectEl=$('subject'),backdropEl=$('backdrop'),replaceStrEl=$('replaceStr');
+const ledEl=$('led'),statusTextEl=$('statusText'),errMsgEl=$('errMsg');
+const statMatchesEl=$('statMatches'),statTimeEl=$('statTime'),leftCountEl=$('leftCount');
+
+function escHTML(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function escAttr(s){return escHTML(s).replace(/"/g,'&quot;');}
+function flagStr(forScan){let f=[...FLAGS].filter(x=>activeFlags.has(x)).join('');if(forScan){f=f.replace('y','');if(f.indexOf('g')<0)f+='g';}return f;}
+
+/* ---------- flags ---------- */
+function buildFlags(){
+  const c=$('flags');c.innerHTML='';
+  FLAGS.forEach(f=>{
+    const b=document.createElement('button');
+    b.className='flag'+(activeFlags.has(f)?' on':'');b.dataset.flag=f;b.type='button';
+    b.innerHTML=`${f}<span class="tip">${escHTML(I18N[LANG].flagTips[f])}</span>`;
+    b.onclick=()=>{activeFlags.has(f)?activeFlags.delete(f):activeFlags.add(f);b.classList.toggle('on');persist();runMatch();};
+    c.appendChild(b);
+  });
+}
+
+/* ---------- run pipeline ---------- */
+function runMatch(){
+  const pattern=patternEl.value;
+  // validate (compilation only — does not execute, so cannot freeze)
+  let valid=true,errText='';
+  try{if(pattern)new RegExp(pattern,flagStr(false));}catch(e){valid=false;errText=e.message;}
+  patternEl.classList.toggle('err',!valid&&!!pattern);
+  ledEl.classList.toggle('bad',!valid&&!!pattern);
+  statusTextEl.textContent=valid?I18N[LANG].validS:I18N[LANG].errorS;
+  errMsgEl.textContent=valid?'':errText;
+  renderExplain(); // independent of execution
+
+  if(!valid||!pattern){applyResult({matches:[],replaced:null,error:valid?null:errText,capped:false},0);return;}
+
+  currentJob++;const job=currentJob;
+  const subject=subjectEl.value,flags=flagStr(false),replaceStr=replaceStrEl.value;
+  const t0=performance.now();
+  if(useWorker&&worker){
+    clearTimeout(watchdog);
+    watchdog=setTimeout(()=>onTimeout(job),TIMEOUT);
+    worker._t0=t0;
+    worker.postMessage({jobId:job,pattern,flags,subject,replaceStr});
+  }else{
+    const r=doMatch(pattern,flags,subject,replaceStr);
+    applyResult(r,performance.now()-t0);
+  }
+}
+function onWorkerMessage(e){
+  const r=e.data;if(r.jobId!==currentJob)return;
+  clearTimeout(watchdog);
+  applyResult(r,performance.now()-(worker._t0||performance.now()));
+}
+function onTimeout(job){
+  if(job!==currentJob)return;
+  if(worker)worker.terminate();
+  spawnWorker();
+  applyTimeout();
+}
+function applyTimeout(){
+  lastResult=null;
+  statMatchesEl.textContent='—';statTimeEl.textContent='>'+TIMEOUT+' ms';leftCountEl.textContent='—';
+  backdropEl.innerHTML=escHTML(subjectEl.value)+'\n';
+  $('pane-matches').innerHTML=`<div class="empty warn">${escHTML(I18N[LANG].timeoutMsg)}</div>`;
+  $('replaceOut').innerHTML=`<span style="color:var(--danger)">${escHTML(I18N[LANG].timeoutMsg)}</span>`;
+}
+function applyResult(r,ms){
+  lastResult=r;
+  if(r.error){
+    statMatchesEl.textContent='0';statTimeEl.textContent='0.0 ms';leftCountEl.textContent='0';
+    backdropEl.innerHTML=escHTML(subjectEl.value)+'\n';
+    renderMatches([]);renderReplace(r);renderCode();return;
+  }
+  const matches=r.matches||[];
+  statMatchesEl.textContent=String(matches.length)+(r.capped?'+':'');
+  statTimeEl.textContent=(ms||0).toFixed(1)+' ms';
+  leftCountEl.textContent=String(matches.length)+(r.capped?'+':'');
+  renderHighlight(matches);renderMatches(matches);renderReplace(r);renderCode();
+}
+
+/* ---------- highlight ---------- */
+function renderHighlight(matches){
+  const text=subjectEl.value;
+  if(!matches.length){backdropEl.innerHTML=escHTML(text)+'\n';return;}
+  let html='',cursor=0;
+  matches.forEach((mt,idx)=>{
+    if(mt.index<cursor)return;
+    html+=escHTML(text.slice(cursor,mt.index));
+    const cls='m'+(idx%6);
+    const matched=mt.text.length?escHTML(mt.text):'';
+    html+=matched?`<mark class="${cls}">${matched}</mark>`:`<mark class="${cls}" style="outline:1px solid var(--signal);padding:0 1px"></mark>`;
+    cursor=mt.index+mt.text.length;
+  });
+  html+=escHTML(text.slice(cursor));
+  backdropEl.innerHTML=html+'\n';
+}
+subjectEl.addEventListener('scroll',()=>{backdropEl.scrollTop=subjectEl.scrollTop;backdropEl.scrollLeft=subjectEl.scrollLeft;});
+
+/* ---------- matches ---------- */
+function renderMatches(matches){
+  const pane=$('pane-matches'),t=I18N[LANG];
+  if(!patternEl.value){pane.innerHTML=`<div class="empty">${t.emptyPattern}</div>`;return;}
+  if(lastResult&&lastResult.error){pane.innerHTML=`<div class="empty warn">${escHTML(lastResult.error)}</div>`;return;}
+  if(!matches.length){pane.innerHTML=`<div class="empty">${t.noMatch}</div>`;return;}
+  const meta=groupMeta(patternEl.value);
+  const shown=matches.slice(0,RENDER_CAP);
+  let html='';
+  if(shown.length<matches.length||lastResult&&lastResult.capped){
+    html+=`<div class="panel-head" style="padding:0 0 8px;border:0"><button class="mini" id="copyMatchesBtn">⧉ ${t.copyMatches}</button></div>`;
+  }else{
+    html+=`<div style="text-align:right;margin-bottom:6px"><button class="mini" id="copyMatchesBtn">⧉ ${t.copyMatches}</button></div>`;
+  }
+  shown.forEach((mt,idx)=>{
+    const cls='m'+(idx%6);
+    html+=`<div class="match"><div class="match-head">
+      <span class="swatch" style="background:var(--${cls})"></span>
+      <span class="mtxt">${mt.text.length?escHTML(mt.text):'<i style="color:var(--muted-2)">∅ '+t.zeroLen+'</i>'}</span>
+      <span class="pos">${t.pos} ${mt.index}</span></div>`;
+    if(mt.groups&&mt.groups.length){
+      html+='<div class="groups">';
+      mt.groups.forEach((g,gi)=>{
+        const mInfo=meta.find(x=>x.num===gi+1);
+        const label=mInfo&&mInfo.name?`$${gi+1} «${escHTML(mInfo.name)}»`:`$${gi+1}`;
+        const val=(g===null||g===undefined)?`<span class="gv empty-g">${t.emptyGroup}</span>`:`<span class="gv">${escHTML(g)||'<i style="color:var(--muted-2)">""</i>'}</span>`;
+        html+=`<div class="group-row"><span class="gk">${label}</span>${val}</div>`;
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  if(shown.length<matches.length){html+=`<div class="more-note">… ${shown.length} / ${matches.length}${lastResult&&lastResult.capped?'+':''}</div>`;}
+  pane.innerHTML=html;
+  const cm=$('copyMatchesBtn');
+  if(cm)cm.onclick=()=>{copyText(matches.map(m=>m.text).join('\n'),cm);};
+}
+
+/* ---------- explanation ---------- */
+function renderExplain(){
+  const pane=$('pane-explain'),t=I18N[LANG];
+  const lines=explain(patternEl.value,LANG);
+  if(!lines||!lines.length){pane.innerHTML=`<div class="empty">${t.explainEmpty}</div>`;return;}
+  let html='<ul class="explain-list">';
+  lines.forEach(l=>{
+    const indent=l.depth*18;
+    const cls=l.cls==='alt'?' class="alt"':'';
+    html+=`<li style="padding-left:${indent}px"><span class="bullet">${l.cls==='alt'?'↳':'▸'}</span><span${cls}>${escHTML(l.text)}</span></li>`;
+  });
+  html+='</ul>';pane.innerHTML=html;
+}
+
+/* ---------- replace ---------- */
+function renderReplace(r){
+  const out=$('replaceOut');
+  if(!patternEl.value){out.textContent='';return;}
+  if(r&&r.replaceError){out.innerHTML=`<span style="color:var(--danger)">${escHTML(r.replaceError)}</span>`;return;}
+  if(r&&r.error){out.innerHTML=`<span style="color:var(--danger)">${escHTML(r.error)}</span>`;return;}
+  out.textContent=(r&&r.replaced!=null)?r.replaced:'';
+}
+replaceStrEl.addEventListener('input',()=>{persist();runMatch();});
+
+/* ---------- code export ---------- */
+function codeSnippets(pattern,flags){
+  const jsLit=pattern.replace(/\//g,'\\/')||'(?:)';
+  // Python: raw string, do NOT double backslashes; pick a quote not present
+  const pyStr=p=>p.indexOf('"')<0?'r"'+p+'"':(p.indexOf("'")<0?"r'"+p+"'":'"'+p.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"');
+  const pf=[];if(flags.includes('i'))pf.push('re.I');if(flags.includes('m'))pf.push('re.M');if(flags.includes('s'))pf.push('re.S');if(flags.includes('u'))pf.push('re.U');
+  const pflags=pf.length?', '+pf.join('|'):'';
+  // PHP: ~ delimiter (escape ~ for regex, ' for the single-quoted string)
+  const phpPat=pattern.replace(/~/g,'\\~').replace(/'/g,"\\'");
+  const phpFlags=flags.replace('g','').replace('y','');
+  // Go: inline (?ims) flags; raw backtick string, or quoted fallback if a backtick is present
+  const goInline=['i','m','s'].filter(f=>flags.includes(f)).join('');
+  const goBody=(goInline?'(?'+goInline+')':'')+pattern;
+  const goStr=goBody.indexOf('`')<0?'`'+goBody+'`':'"'+goBody.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"';
+  return {
+    JavaScript:`const re = /${jsLit}/${flags};\nconst matches = ${flags.includes('g')?'[...str.matchAll(re)]':'str.match(re)'};`,
+    Python:`import re\npat = re.compile(${pyStr(pattern)}${pflags})\nmatches = pat.findall(text)`,
+    PHP:`$re = '~${phpPat}~${phpFlags}';\npreg_match_all($re, $text, $matches);`,
+    Go:`re := regexp.MustCompile(${goStr})\nmatches := re.FindAllString(text, -1)`
+  };
+}
+function renderCode(){
+  const pane=$('codeOut');
+  if(!patternEl.value){pane.innerHTML=`<div class="empty">${I18N[LANG].emptyPattern}</div>`;return;}
+  const snips=codeSnippets(patternEl.value,flagStr(false));
+  const keys=Object.keys(snips);
+  let html='';
+  keys.forEach((lang,idx)=>{
+    html+=`<div class="code-block"><div class="cl">${lang}</div><pre>${escHTML(snips[lang])}</pre><button class="copy" data-idx="${idx}">⧉</button></div>`;
+  });
+  pane.innerHTML=html;
+  pane.querySelectorAll('.copy').forEach(b=>{b.onclick=()=>copyText(snips[keys[+b.getAttribute('data-idx')]],b);});
+}
+
+/* ---------- library ---------- */
+function renderLibrary(){
+  const pane=$('pane-library');let html='';
+  LIBRARY.forEach(group=>{
+    html+=`<div class="lib-cat">${escHTML(group.cat[LANG])}</div>`;
+    group.items.forEach((it,gi)=>{
+      html+=`<div class="lib-item" data-re="${escAttr(it.re)}" data-flags="${escAttr(it.flags)}">
+        <div class="li-name">${escHTML(it.name[LANG])}<span class="load">${LANG==='ro'?'încarcă →':'load →'}</span></div>
+        <div class="li-re">/${escHTML(it.re)}/${it.flags}</div>
+        <div class="li-desc">${escHTML(it.desc[LANG])}</div></div>`;
+    });
+  });
+  pane.innerHTML=html;
+  pane.querySelectorAll('.lib-item').forEach(el=>{
+    el.onclick=()=>{patternEl.value=el.dataset.re;activeFlags=new Set(el.dataset.flags.split('').filter(Boolean));buildFlags();switchTab('matches');persist();runMatch();};
+  });
+}
+
+/* ---------- cheatsheet ---------- */
+function renderCheat(){
+  const pane=$('pane-cheat');let html='';
+  CHEAT[LANG].forEach(sec=>{
+    html+=`<div class="cheat-cat">${escHTML(sec.cat)}</div><div class="cheat-grid">`;
+    sec.rows.forEach(([code,desc])=>{html+=`<code>${escHTML(code)}</code><span>${escHTML(desc)}</span>`;});
+    html+='</div>';
+  });
+  pane.innerHTML=html;
+}
+
+/* ---------- tabs ---------- */
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('on',p.id==='pane-'+tab));
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+
+/* ---------- clipboard ---------- */
+function copyText(text,btn){
+  const done=()=>{if(btn){const o=btn.textContent;btn.textContent='✓';setTimeout(()=>btn.textContent=o,1000);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));}
+  else fallbackCopy(text,done);
+}
+function fallbackCopy(text,cb){
+  try{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);cb&&cb();}catch(e){}
+}
+
+/* ---------- language ---------- */
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[LANG][k]!=null)el.textContent=I18N[LANG][k];});
+  $('langSel').value=LANG;
+  buildFlags();renderLibrary();renderCheat();runMatch();
+}
+
+/* ---------- theme ---------- */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme',theme==='light'?'light':'dark');
+  store.set('regexlab-theme',theme);
+}
+
+/* ---------- persistence + permalink ---------- */
+function persist(){
+  store.set('regexlab-pattern',patternEl.value);
+  store.set('regexlab-flags',[...activeFlags].join(''));
+  store.set('regexlab-subject',subjectEl.value);
+  store.set('regexlab-replace',replaceStrEl.value);
+  store.set('regexlab-lang',LANG);
+}
+function buildPermalink(){
+  const p=encodeURIComponent(patternEl.value),f=[...activeFlags].join(''),
+        s=encodeURIComponent(subjectEl.value),r=encodeURIComponent(replaceStrEl.value);
+  return location.origin+location.pathname+`#p=${p}&f=${f}&s=${s}&r=${r}&l=${LANG}`;
+}
+function restoreFromHash(){
+  if(!location.hash||location.hash.length<2)return false;
+  const params={};location.hash.slice(1).split('&').forEach(kv=>{const[k,v]=kv.split('=');params[k]=v;});
+  if(params.p!==undefined){
+    try{patternEl.value=decodeURIComponent(params.p||'');}catch(e){}
+    if(params.f!==undefined)activeFlags=new Set((params.f||'').split('').filter(Boolean));
+    if(params.s!==undefined){try{subjectEl.value=decodeURIComponent(params.s||'');}catch(e){}}
+    if(params.r!==undefined){try{replaceStrEl.value=decodeURIComponent(params.r||'');}catch(e){}}
+    if(params.l&&I18N[params.l])LANG=params.l;
+    return true;
+  }
+  return false;
+}
+
+/* ---------- wiring ---------- */
+patternEl.addEventListener('input',()=>{persist();runMatch();});
+subjectEl.addEventListener('input',()=>{persist();runMatch();});
+$('langSel').addEventListener('change',e=>{
+  const prev=LANG;LANG=e.target.value;persist();
+  if(subjectEl.value===SAMPLE[prev])subjectEl.value=SAMPLE[LANG];
+  applyLang();
+});
+$('themeBtn').onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';applyTheme(cur);
+};
+$('aboutBtn').onclick=()=>$('aboutModal').classList.add('on');
+$('closeModal').onclick=()=>$('aboutModal').classList.remove('on');
+$('aboutModal').onclick=e=>{if(e.target===$('aboutModal'))$('aboutModal').classList.remove('on');};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('aboutModal').classList.remove('on');});
+$('copyRegexBtn').onclick=()=>copyText(`/${patternEl.value}/${flagStr(false)}`,$('copyRegexBtn').querySelector('span')||$('copyRegexBtn'));
+$('copyLinkBtn').onclick=()=>{const sp=$('copyLinkBtn').querySelector('span');copyText(buildPermalink(),sp);};
+$('resetBtn').onclick=()=>{
+  patternEl.value='([A-Za-z]+)\\s(\\d+)';activeFlags=new Set(['g']);replaceStrEl.value='$2 $1';
+  subjectEl.value=SAMPLE[LANG];if(history.replaceState)history.replaceState(null,'',location.pathname);
+  buildFlags();persist();runMatch();
+};
+
+/* ---------- language selector options ---------- */
+(function(){const sel=$('langSel');LANGS.forEach(l=>{const o=document.createElement('option');o.value=l.code;o.textContent=l.label;sel.appendChild(o);});})();
+
+/* ---------- init ---------- */
+(function init(){
+  spawnWorker();
+  // language: hash > saved > browser > en
+  const saved=store.get('regexlab-lang');
+  const nav=(navigator.language||'en').slice(0,2);
+  if(saved&&I18N[saved])LANG=saved;else if(I18N[nav])LANG=nav;else LANG='en';
+  // theme
+  const theme=store.get('regexlab-theme')||'dark';applyTheme(theme);
+  // restore state: hash first (shared link), else saved, else defaults
+  const fromHash=restoreFromHash();
+  if(!fromHash){
+    const sp=store.get('regexlab-pattern');if(sp!==null)patternEl.value=sp;
+    const sf=store.get('regexlab-flags');if(sf!==null)activeFlags=new Set(sf.split('').filter(Boolean));
+    const ss=store.get('regexlab-subject');if(ss!==null)subjectEl.value=ss;else subjectEl.value=SAMPLE[LANG];
+    const sr=store.get('regexlab-replace');if(sr!==null)replaceStrEl.value=sr;
+  }
+  if(!subjectEl.value)subjectEl.value=SAMPLE[LANG];
+  applyLang();
+})();
+</script>
+</body>
+</html>
