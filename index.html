@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="UTF-8">
 <!--
   ============================================================================
   RegexLab
@@ -27,7 +28,6 @@
 /* Accesibilitate: inel de focus vizibil pentru navigare la tastatură. */
 :focus-visible{outline:2px solid #4a90d9;outline-offset:2px;border-radius:2px}
 </style>
-<meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' 'unsafe-inline' blob:; connect-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RegexLab — regular-expression laboratory</title>
@@ -245,7 +245,7 @@
     <div class="pat-row">
       <div class="delim">/</div>
       <div class="pat-input-wrap">
-        <input id="pattern" type="text" spellcheck="false" autocomplete="off" value="([A-Za-z]+)\s(\d+)">
+        <input id="pattern" type="text" aria-label="Regular expression" spellcheck="false" autocomplete="off" value="([A-Za-z]+)\s(\d+)">
       </div>
       <div class="delim">/</div>
       <div class="flags" id="flags"></div>
@@ -273,7 +273,7 @@
       <div class="panel-body">
         <div class="editor">
           <div class="backdrop" id="backdrop"></div>
-          <textarea id="subject" spellcheck="false" autocomplete="off"></textarea>
+          <textarea id="subject" aria-label="Test string" spellcheck="false" autocomplete="off"></textarea>
         </div>
       </div>
     </div>
@@ -292,7 +292,7 @@
         <div class="tabpane" id="pane-explain"></div>
         <div class="tabpane" id="pane-replace">
           <p class="hint" data-i18n="replaceHint">Use $1, $2 … for groups, $& for the whole match.</p>
-          <input class="replace-in" id="replaceStr" spellcheck="false" value="$2 $1">
+          <input class="replace-in" id="replaceStr" aria-label="Replacement" spellcheck="false" value="$2 $1">
           <p class="sub-label" data-i18n="replaceResult">Result</p>
           <div class="replace-out" id="replaceOut"></div>
         </div>
@@ -342,6 +342,7 @@
    ========================================================= */
 
 /* ---------- safe storage (degrades in sandboxed iframes) ---------- */
+const hasLang=c=>Object.prototype.hasOwnProperty.call(I18N,c); /* function declarations below hoist; I18N is a const defined before any call */
 const store={
   get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
   set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -1022,7 +1023,7 @@ function doMatch(pattern,flags,subject,replaceStr){
       var groups=[];for(var k=1;k<m.length;k++){groups.push(m[k]===undefined?null:m[k]);}
       var named=null;if(m.groups){named={};for(var key in m.groups){named[key]=m.groups[key]===undefined?null:m.groups[key];}}
       res.matches.push({index:m.index,text:m[0],groups:groups,named:named});
-      if(m.index===re.lastIndex)re.lastIndex++;
+      if(m.index===re.lastIndex){var cc=subject.charCodeAt(re.lastIndex);re.lastIndex+=(re.unicode&&cc>=0xD800&&cc<=0xDBFF&&re.lastIndex+1<subject.length)?2:1;}
       if(++guard>20000){res.capped=true;break;}
     }
   }catch(e){res.error=e.message;return res;}
@@ -1032,12 +1033,12 @@ function doMatch(pattern,flags,subject,replaceStr){
 }
 
 /* ---------- worker setup with sync fallback ---------- */
-var worker=null,useWorker=false;
+var worker=null,useWorker=false,workerURL=null;
 var workerSource='const doMatch='+doMatch.toString()+';self.onmessage=function(e){var d=e.data;var r=doMatch(d.pattern,d.flags,d.subject,d.replaceStr);r.jobId=d.jobId;self.postMessage(r);};';
 function spawnWorker(){
   try{
-    var blob=new Blob([workerSource],{type:'application/javascript'});
-    worker=new Worker(URL.createObjectURL(blob));
+    if(!workerURL)workerURL=URL.createObjectURL(new Blob([workerSource],{type:'application/javascript'}));
+    worker=new Worker(workerURL);
     worker.onmessage=onWorkerMessage;
     worker.onerror=function(){useWorker=false;};
     useWorker=true;
@@ -1089,7 +1090,7 @@ function runMatch(){
   errMsgEl.textContent=valid?'':errText;
   renderExplain(); // independent of execution
 
-  if(!valid||!pattern){applyResult({matches:[],replaced:null,error:valid?null:errText,capped:false},0);return;}
+  if(!valid||!pattern){currentJob++;clearTimeout(watchdog);applyResult({matches:[],replaced:null,error:valid?null:errText,capped:false},0);return;}
 
   currentJob++;const job=currentJob;
   const subject=subjectEl.value,flags=flagStr(false),replaceStr=replaceStrEl.value;
@@ -1217,14 +1218,23 @@ function renderReplace(r){
 replaceStrEl.addEventListener('input',()=>{persist();runMatch();});
 
 /* ---------- code export ---------- */
+function escSlash(p){return p.replace(/\\[\s\S]|\//g,m=>m==='/'?'\\/':m);} /* escape only unescaped / */
+function phpQuote(p){ /* regex -> body of a PHP single-quoted string with ~ delimiter */
+  let o='',i=0;
+  while(i<p.length){const c=p[i];
+    if(c==='\\'&&i+1<p.length){const n=p[i+1];
+      if(n==='\\')o+='\\\\\\\\';else if(n==="'")o+="\\\\\\'";else o+='\\'+n;
+      i+=2;continue;}
+    o+=c==='~'?'\\~':(c==="'"?"\\'":c);i++;}
+  return o;}
 function codeSnippets(pattern,flags){
-  const jsLit=pattern.replace(/\//g,'\\/')||'(?:)';
+  const jsLit=escSlash(pattern)||'(?:)';
   // Python: raw string, do NOT double backslashes; pick a quote not present
   const pyStr=p=>p.indexOf('"')<0?'r"'+p+'"':(p.indexOf("'")<0?"r'"+p+"'":'"'+p.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"');
   const pf=[];if(flags.includes('i'))pf.push('re.I');if(flags.includes('m'))pf.push('re.M');if(flags.includes('s'))pf.push('re.S');if(flags.includes('u'))pf.push('re.U');
   const pflags=pf.length?', '+pf.join('|'):'';
   // PHP: ~ delimiter (escape ~ for regex, ' for the single-quoted string)
-  const phpPat=pattern.replace(/~/g,'\\~').replace(/'/g,"\\'");
+  const phpPat=phpQuote(pattern);
   const phpFlags=flags.replace('g','').replace('y','');
   // Go: inline (?ims) flags; raw backtick string, or quoted fallback if a backtick is present
   const goInline=['i','m','s'].filter(f=>flags.includes(f)).join('');
@@ -1264,7 +1274,7 @@ function renderLibrary(){
   });
   pane.innerHTML=html;
   pane.querySelectorAll('.lib-item').forEach(el=>{
-    el.onclick=()=>{patternEl.value=el.dataset.re;activeFlags=new Set(el.dataset.flags.split('').filter(Boolean));buildFlags();switchTab('matches');persist();runMatch();};
+    el.onclick=()=>{patternEl.value=el.dataset.re;activeFlags=new Set(el.dataset.flags.split('').filter(x=>FLAGS.includes(x)));buildFlags();switchTab('matches');persist();runMatch();};
   });
 }
 
@@ -1329,10 +1339,10 @@ function restoreFromHash(){
   const params={};location.hash.slice(1).split('&').forEach(kv=>{const[k,v]=kv.split('=');params[k]=v;});
   if(params.p!==undefined){
     try{patternEl.value=decodeURIComponent(params.p||'');}catch(e){}
-    if(params.f!==undefined)activeFlags=new Set((params.f||'').split('').filter(Boolean));
+    if(params.f!==undefined)activeFlags=new Set((params.f||'').split('').filter(x=>FLAGS.includes(x)));
     if(params.s!==undefined){try{subjectEl.value=decodeURIComponent(params.s||'');}catch(e){}}
     if(params.r!==undefined){try{replaceStrEl.value=decodeURIComponent(params.r||'');}catch(e){}}
-    if(params.l&&I18N[params.l])LANG=params.l;
+    if(params.l&&hasLang(params.l))LANG=params.l;
     return true;
   }
   return false;
@@ -1353,7 +1363,7 @@ $('aboutBtn').onclick=()=>$('aboutModal').classList.add('on');
 $('closeModal').onclick=()=>$('aboutModal').classList.remove('on');
 $('aboutModal').onclick=e=>{if(e.target===$('aboutModal'))$('aboutModal').classList.remove('on');};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('aboutModal').classList.remove('on');});
-$('copyRegexBtn').onclick=()=>copyText(`/${patternEl.value}/${flagStr(false)}`,$('copyRegexBtn').querySelector('span')||$('copyRegexBtn'));
+$('copyRegexBtn').onclick=()=>copyText(`/${escSlash(patternEl.value)||'(?:)'}/${flagStr(false)}`,$('copyRegexBtn').querySelector('span')||$('copyRegexBtn'));
 $('copyLinkBtn').onclick=()=>{const sp=$('copyLinkBtn').querySelector('span');copyText(buildPermalink(),sp);};
 $('resetBtn').onclick=()=>{
   patternEl.value='([A-Za-z]+)\\s(\\d+)';activeFlags=new Set(['g']);replaceStrEl.value='$2 $1';
@@ -1370,14 +1380,14 @@ $('resetBtn').onclick=()=>{
   // language: hash > saved > browser > en
   const saved=store.get('regexlab-lang');
   const nav=(navigator.language||'en').slice(0,2);
-  if(saved&&I18N[saved])LANG=saved;else if(I18N[nav])LANG=nav;else LANG='en';
+  if(saved&&hasLang(saved))LANG=saved;else if(hasLang(nav))LANG=nav;else LANG='en';
   // theme
   const theme=store.get('regexlab-theme')||'dark';applyTheme(theme);
   // restore state: hash first (shared link), else saved, else defaults
   const fromHash=restoreFromHash();
   if(!fromHash){
     const sp=store.get('regexlab-pattern');if(sp!==null)patternEl.value=sp;
-    const sf=store.get('regexlab-flags');if(sf!==null)activeFlags=new Set(sf.split('').filter(Boolean));
+    const sf=store.get('regexlab-flags');if(sf!==null)activeFlags=new Set(sf.split('').filter(x=>FLAGS.includes(x)));
     const ss=store.get('regexlab-subject');if(ss!==null)subjectEl.value=ss;else subjectEl.value=SAMPLE[LANG];
     const sr=store.get('regexlab-replace');if(sr!==null)replaceStrEl.value=sr;
   }
