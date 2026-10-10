@@ -44,6 +44,10 @@ Descarcă `index.html` și deschide-l în browser; funcționează fără interne
 
 CC0 1.0 Universal (domeniu public) — vezi fișierul LICENSE.
 
+## Audit
+
+Audit: 2026-10-10 — afirmațiile din README (fără cereri de rețea, stocare doar în localStorage) corespund codului; fără `fetch`/CDN/WebSocket. Corecturi de contrast și ARIA.
+
 ## Autor
 
 Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf

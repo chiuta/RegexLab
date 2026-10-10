@@ -40,7 +40,7 @@
   :root{
     --bg:#0b0d10; --panel:#13161c; --panel-2:#171b22;
     --line:#262b34; --line-soft:#1d222a;
-    --txt:#d8dde6; --muted:#828b9b; --muted-2:#5d6573;
+    --txt:#d8dde6; --muted:#828b9b; --muted-2:#7a8393;
     --signal:#ffb627; --signal-dim:#3a2e10; --signal-ink:#1a1305;
     --danger:#ff5d5d; --ok:#4fd1c5; --dot:rgba(255,255,255,.025);
     --mono: ui-monospace,'JetBrains Mono','Cascadia Code','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
@@ -51,9 +51,9 @@
   html[data-theme="light"]{
     --bg:#f4f1ea; --panel:#fffdf8; --panel-2:#f1ece1;
     --line:#ddd5c5; --line-soft:#e8e2d5;
-    --txt:#2a2620; --muted:#6f675a; --muted-2:#9a917f;
-    --signal:#b9760d; --signal-dim:#f4e6c8; --signal-ink:#fffdf8;
-    --danger:#c43b3b; --ok:#0f8a7e; --dot:rgba(0,0,0,.045);
+    --txt:#2a2620; --muted:#6f675a; --muted-2:#6b6356;
+    --signal:#8a5506; --signal-dim:#f4e6c8; --signal-ink:#fffdf8;
+    --danger:#c43b3b; --ok:#087066; --dot:rgba(0,0,0,.045);
     --mark-ink:#1a1305;
   }
   *{box-sizing:border-box}
@@ -215,7 +215,7 @@
   .links a.primary{background:var(--signal);color:var(--signal-ink);border-color:var(--signal);font-weight:700}
   .links a.primary:hover{color:var(--signal-ink);filter:brightness(1.06)}
 
-  footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted-2);
+  footer{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted);
     display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
   footer .sig{color:var(--muted)}
   footer a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted-2)}
@@ -272,7 +272,7 @@
       </div>
       <div class="panel-body">
         <div class="editor">
-          <div class="backdrop" id="backdrop"></div>
+          <div class="backdrop" id="backdrop" aria-hidden="true"></div>
           <textarea id="subject" aria-label="Test string" spellcheck="false" autocomplete="off"></textarea>
         </div>
       </div>
