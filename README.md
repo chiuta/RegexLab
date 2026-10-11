@@ -4,6 +4,8 @@ Laborator de expresii regulate: testare în timp real, explicații, înlocuire, 
 
 **Live:** https://chiuta.github.io/RegexLab/
 
+**Ultima actualizare:** 11 octombrie 2026
+
 ![Captura de ecran](screenshot.png)
 
 ## Ce este
@@ -39,6 +41,12 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 ## Rulare locală / offline
 
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
+
+## Istoric / Changelog
+
+### 11 octombrie 2026
+- Accesibilitate: conținutul principal este încadrat în `<main>` (antet și subsol rămân repere separate); axe-core raportează 0 încălcări la 1280 și 360 px.
+- CSP: `script-src` folosește hash SHA-256 în loc de `'unsafe-inline'` (workerul din `blob:` rămâne permis); verificat cu CSP activ: potrivirile și workerul funcționează.
 
 ## Licență
 
