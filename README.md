@@ -16,7 +16,10 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 
 - Câmp pentru model (`/.../`), fanioane `g i m s u y`, indicator de validitate („valid” / eroare), număr de potriviri și timp de execuție.
 - Zona **Test string** cu evidențierea potrivirilor.
-- Șase file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP și Go), **Library** (15 modele gata făcute, în șapte limbi) și **Reference** (fișă de referință).
+- Fila **Tests**: cazuri de test, un caz pe linie — `+ text` trebuie să se potrivească, `- text` nu; se afișează reușit/eșuat pe caz și totalul (evaluate în același Web Worker, cu aceeași limită de timp).
+- Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
+- Fragmentele de cod adaptează grupurile numite pentru Python/Go (`(?P<n>…)`) și adaugă note când sintaxa nu este disponibilă (Go: fără lookaround/backreferințe; Python: fără `\p{…}`; PHP: `\p{…}` cere modificatorul `u`).
+- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP și Go), **Library** (15 modele gata făcute, în șapte limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
 - Evaluarea rulează într-un Web Worker, cu limită de timp de 1500 ms și mesaj de avertizare la posibil „catastrophic backtracking”.
 - Butoane **Copy regex**, **Copy link** (permalink cu modelul, fanioanele, textul și înlocuirea în fragmentul `#` al URL-ului) și **Reset**.
 - Temă luminoasă / întunecată (**Theme**), fereastră **About**.
@@ -34,7 +37,7 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 
 ## Confidențialitate și rețea
 
-- **Stocare locală (localStorage):** șase chei `regexlab-*`: `regexlab-pattern`, `regexlab-flags`, `regexlab-subject`, `regexlab-replace`, `regexlab-lang`, `regexlab-theme`. Rămân doar în browserul tău.
+- **Stocare locală (localStorage):** șapte chei `regexlab-*`: `regexlab-pattern`, `regexlab-flags`, `regexlab-subject`, `regexlab-replace`, `regexlab-tests`, `regexlab-lang`, `regexlab-theme`. Rămân doar în browserul tău.
 - **Rețea:** în cod nu există cereri de rețea, scripturi sau fonturi externe. Fereastra About conține linkuri (Patreon, Buy Me a Coffee, site, contact) care se deschid doar la clic. Fără analytics sau telemetrie.
 - Linkul creat cu **Copy link** include în URL modelul și textul de test; nu-l partaja dacă textul este sensibil.
 
@@ -43,6 +46,9 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
 ## Istoric / Changelog
+
+### 11 octombrie 2026 (a doua trecere)
+- Filă **Tests** cu cazuri `+`/`-`; avertisment euristic pentru cuantificatori imbricați; fragmente Python/Go/PHP corectate pentru grupuri numite și cu note de compatibilitate; texte noi în cele 7 limbi. CSP: hash recalculat.
 
 ### 11 octombrie 2026
 - Accesibilitate: conținutul principal este încadrat în `<main>` (antet și subsol rămân repere separate); axe-core raportează 0 încălcări la 1280 și 360 px.

@@ -28,7 +28,7 @@
 /* Accesibilitate: inel de focus vizibil pentru navigare la tastatură. */
 :focus-visible{outline:2px solid #4a90d9;outline-offset:2px;border-radius:2px}
 </style>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' 'sha256-Xm0gHoT+Df16antA7jiRo71bmodzA3sf7dJZTxfOldg=' blob:; connect-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' blob: 'sha256-u4oEGoVapwmc1cid3ZVII85xoBo6RU0GowEWWCmSqxY='; connect-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RegexLab — regular-expression laboratory</title>
 <meta name="description" content="An offline regular-expression laboratory: live tester, plain-language explanation, replace, code export, pattern library and reference. No server, no account, no telemetry. One HTML file.">
@@ -103,6 +103,14 @@
   .flag:hover .tip{opacity:1}
   .pat-status{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
   .pat-status .err-msg{color:var(--danger)}
+  .pat-status .warn-msg{color:var(--txt)}
+  #testsIn{width:100%;min-height:96px;resize:vertical;font-family:var(--mono);font-size:13px}
+  .trow{display:flex;gap:8px;align-items:baseline;padding:4px 2px;border-bottom:1px solid var(--line,rgba(128,128,128,.25));font-family:var(--mono);font-size:12.5px;word-break:break-all}
+  .trow .ti{flex:0 0 auto;font-weight:700}
+  .trow.ok .ti{color:var(--ok,#3fb27f)}
+  .trow.bad .ti{color:var(--danger)}
+  .trow small{color:var(--muted);font-family:inherit}
+  .tsum{margin:10px 0 4px;font-weight:700;font-size:13px}
   .pat-status b{color:var(--signal)}
   .dot-led{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 8px var(--ok)}
   .dot-led.bad{background:var(--danger);box-shadow:0 0 8px var(--danger)}
@@ -256,6 +264,7 @@
       <span data-i18n="matchesLabel">matches:</span> <b id="statMatches">0</b>
       <span data-i18n="timeLabel">time:</span> <b id="statTime">0.0 ms</b>
       <span class="err-msg" id="errMsg"></span>
+      <span class="warn-msg" id="redosMsg"></span>
     </div>
   </div>
 
@@ -286,6 +295,7 @@
         <button data-tab="replace" data-i18n="tabReplace">Replace</button>
         <button data-tab="code" data-i18n="tabCode">Code</button>
         <button data-tab="library" data-i18n="tabLibrary">Library</button>
+        <button data-tab="tests" data-i18n="tabTests">Tests</button>
         <button data-tab="cheat" data-i18n="tabCheat">Reference</button>
       </div>
       <div class="panel-body">
@@ -302,6 +312,11 @@
           <div id="codeOut"></div>
         </div>
         <div class="tabpane" id="pane-library"></div>
+        <div class="tabpane" id="pane-tests">
+          <p class="hint" data-i18n="testsHint">One case per line.</p>
+          <textarea class="replace-in" id="testsIn" aria-label="Tests" spellcheck="false" rows="5" placeholder="+ 2026-10-11&#10;- not a date"></textarea>
+          <div id="testsOut" aria-live="polite"></div>
+        </div>
         <div class="tabpane" id="pane-cheat"></div>
       </div>
     </div>
@@ -364,6 +379,7 @@ const I18N={
   en:{tagline:'regular-expression laboratory · offline',themeToggle:'Theme',aboutBtn:'About',
     matchesLabel:'matches:',timeLabel:'time:',validS:'valid',errorS:'error',subjectTitle:'Test string',
     tabMatches:'Matches',tabExplain:'Explanation',tabReplace:'Replace',tabCode:'Code',tabLibrary:'Library',tabCheat:'Reference',
+    tabTests:'Tests',testsHint:'One case per line: "+ text" must match, "- text" must not match. Other lines are ignored.',testsSum:'{p} of {n} passed',redosWarn:'Warning: nested quantifiers — risk of catastrophic backtracking on long non-matching input.',testsEmpty:'No test cases yet.',testExpM:'expected a match',testExpN:'expected no match',
     noMatch:'No match. Adjust the pattern or the text.',emptyPattern:'Enter a pattern to begin.',
     explainEmpty:'Enter a valid pattern to see an explanation.',
     timeoutMsg:'Timed out — possible catastrophic backtracking. Simplify the pattern.',
@@ -382,6 +398,7 @@ const I18N={
   ro:{tagline:'laborator de expresii regulate · offline',themeToggle:'Temă',aboutBtn:'Despre',
     matchesLabel:'potriviri:',timeLabel:'timp:',validS:'valid',errorS:'eroare',subjectTitle:'Text de testare',
     tabMatches:'Potriviri',tabExplain:'Explicație',tabReplace:'Înlocuire',tabCode:'Cod',tabLibrary:'Bibliotecă',tabCheat:'Referință',
+    tabTests:'Teste',testsHint:'Un caz pe linie: „+ text” trebuie să se potrivească, „- text” nu trebuie. Celelalte linii sunt ignorate.',testsSum:'{p} din {n} reușite',redosWarn:'Atenție: cuantificatori imbricați — risc de backtracking catastrofic pe texte lungi fără potrivire.',testsEmpty:'Niciun caz de test încă.',testExpM:'se aștepta potrivire',testExpN:'se aștepta nicio potrivire',
     noMatch:'Nicio potrivire. Modifică pattern-ul sau textul.',emptyPattern:'Introdu un pattern pentru a începe.',
     explainEmpty:'Introdu un pattern valid pentru explicație.',
     timeoutMsg:'Timp depășit — posibil backtracking catastrofic. Simplifică pattern-ul.',
@@ -400,6 +417,7 @@ const I18N={
   fr:{tagline:'laboratoire d’expressions régulières · hors-ligne',themeToggle:'Thème',aboutBtn:'À propos',
     matchesLabel:'correspondances :',timeLabel:'temps :',validS:'valide',errorS:'erreur',subjectTitle:'Texte de test',
     tabMatches:'Correspondances',tabExplain:'Explication',tabReplace:'Remplacer',tabCode:'Code',tabLibrary:'Bibliothèque',tabCheat:'Référence',
+    tabTests:'Tests',testsHint:'Un cas par ligne : « + texte » doit correspondre, « - texte » ne doit pas. Les autres lignes sont ignorées.',testsSum:'{p} sur {n} réussis',redosWarn:'Attention : quantificateurs imbriqués — risque de retour-arrière catastrophique sur de longs textes sans correspondance.',testsEmpty:'Aucun cas de test.',testExpM:'correspondance attendue',testExpN:'aucune correspondance attendue',
     noMatch:'Aucune correspondance. Modifiez le motif ou le texte.',emptyPattern:'Saisissez un motif pour commencer.',
     explainEmpty:'Saisissez un motif valide pour voir l’explication.',
     timeoutMsg:'Délai dépassé — possible retour-arrière catastrophique. Simplifiez le motif.',
@@ -418,6 +436,7 @@ const I18N={
   it:{tagline:'laboratorio di espressioni regolari · offline',themeToggle:'Tema',aboutBtn:'Info',
     matchesLabel:'corrispondenze:',timeLabel:'tempo:',validS:'valido',errorS:'errore',subjectTitle:'Testo di prova',
     tabMatches:'Corrispondenze',tabExplain:'Spiegazione',tabReplace:'Sostituisci',tabCode:'Codice',tabLibrary:'Libreria',tabCheat:'Riferimento',
+    tabTests:'Test',testsHint:'Un caso per riga: «+ testo» deve corrispondere, «- testo» no. Le altre righe sono ignorate.',testsSum:'{p} su {n} superati',redosWarn:'Attenzione: quantificatori annidati — rischio di backtracking catastrofico su testi lunghi senza corrispondenza.',testsEmpty:'Nessun caso di test.',testExpM:'corrispondenza attesa',testExpN:'nessuna corrispondenza attesa',
     noMatch:'Nessuna corrispondenza. Modifica il pattern o il testo.',emptyPattern:'Inserisci un pattern per iniziare.',
     explainEmpty:'Inserisci un pattern valido per vedere la spiegazione.',
     timeoutMsg:'Tempo scaduto — possibile backtracking catastrofico. Semplifica il pattern.',
@@ -436,6 +455,7 @@ const I18N={
   es:{tagline:'laboratorio de expresiones regulares · sin conexión',themeToggle:'Tema',aboutBtn:'Acerca de',
     matchesLabel:'coincidencias:',timeLabel:'tiempo:',validS:'válido',errorS:'error',subjectTitle:'Texto de prueba',
     tabMatches:'Coincidencias',tabExplain:'Explicación',tabReplace:'Reemplazar',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referencia',
+    tabTests:'Pruebas',testsHint:'Un caso por línea: «+ texto» debe coincidir, «- texto» no. Las demás líneas se ignoran.',testsSum:'{p} de {n} superadas',redosWarn:'Atención: cuantificadores anidados — riesgo de retroceso catastrófico con textos largos sin coincidencia.',testsEmpty:'Aún no hay casos de prueba.',testExpM:'se esperaba coincidencia',testExpN:'se esperaba que no coincidiera',
     noMatch:'Sin coincidencias. Ajusta el patrón o el texto.',emptyPattern:'Introduce un patrón para empezar.',
     explainEmpty:'Introduce un patrón válido para ver la explicación.',
     timeoutMsg:'Tiempo agotado — posible retroceso catastrófico. Simplifica el patrón.',
@@ -454,6 +474,7 @@ const I18N={
   pt:{tagline:'laboratório de expressões regulares · offline',themeToggle:'Tema',aboutBtn:'Sobre',
     matchesLabel:'correspondências:',timeLabel:'tempo:',validS:'válido',errorS:'erro',subjectTitle:'Texto de teste',
     tabMatches:'Correspondências',tabExplain:'Explicação',tabReplace:'Substituir',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referência',
+    tabTests:'Testes',testsHint:'Um caso por linha: «+ texto» deve corresponder, «- texto» não. As outras linhas são ignoradas.',testsSum:'{p} de {n} aprovados',redosWarn:'Atenção: quantificadores aninhados — risco de retrocesso catastrófico em textos longos sem correspondência.',testsEmpty:'Ainda sem casos de teste.',testExpM:'esperava-se correspondência',testExpN:'esperava-se nenhuma correspondência',
     noMatch:'Sem correspondências. Ajuste o padrão ou o texto.',emptyPattern:'Introduza um padrão para começar.',
     explainEmpty:'Introduza um padrão válido para ver a explicação.',
     timeoutMsg:'Tempo esgotado — possível retrocesso catastrófico. Simplifique o padrão.',
@@ -472,6 +493,7 @@ const I18N={
   de:{tagline:'Labor für reguläre Ausdrücke · offline',themeToggle:'Thema',aboutBtn:'Über',
     matchesLabel:'Treffer:',timeLabel:'Zeit:',validS:'gültig',errorS:'Fehler',subjectTitle:'Testtext',
     tabMatches:'Treffer',tabExplain:'Erklärung',tabReplace:'Ersetzen',tabCode:'Code',tabLibrary:'Bibliothek',tabCheat:'Referenz',
+    tabTests:'Tests',testsHint:'Ein Fall pro Zeile: „+ Text“ muss passen, „- Text“ darf nicht passen. Andere Zeilen werden ignoriert.',testsSum:'{p} von {n} bestanden',redosWarn:'Achtung: verschachtelte Quantoren — Gefahr von katastrophalem Backtracking bei langen Texten ohne Treffer.',testsEmpty:'Noch keine Testfälle.',testExpM:'Treffer erwartet',testExpN:'kein Treffer erwartet',
     noMatch:'Kein Treffer. Passe das Muster oder den Text an.',emptyPattern:'Gib ein Muster ein, um zu beginnen.',
     explainEmpty:'Gib ein gültiges Muster ein, um die Erklärung zu sehen.',
     timeoutMsg:'Zeitüberschreitung — mögliches katastrophales Backtracking. Vereinfache das Muster.',
@@ -1014,7 +1036,7 @@ const CHEAT={
    MATCHING CORE — shared by worker and sync fallback.
    Self-contained (no outer refs) so it stringifies cleanly.
    ========================================================= */
-function doMatch(pattern,flags,subject,replaceStr){
+function doMatch(pattern,flags,subject,replaceStr,tests){
   var res={matches:[],replaced:null,error:null,replaceError:null,capped:false};
   if(!pattern){return res;}
   var scanFlags=flags.replace('y','');
@@ -1030,6 +1052,7 @@ function doMatch(pattern,flags,subject,replaceStr){
       if(++guard>20000){res.capped=true;break;}
     }
   }catch(e){res.error=e.message;return res;}
+  if(tests&&tests.length){try{var tre=new RegExp(pattern,flags.replace(/[gy]/g,''));res.tests=[];for(var ti=0;ti<tests.length;ti++){var got=tre.test(tests[ti].s);res.tests.push({ok:got===tests[ti].want,got:got});}}catch(e){res.tests=null;}}
   try{var rre=new RegExp(pattern,flags);res.replaced=subject.replace(rre,replaceStr);}
   catch(e){res.replaceError=e.message;}
   return res;
@@ -1037,7 +1060,7 @@ function doMatch(pattern,flags,subject,replaceStr){
 
 /* ---------- worker setup with sync fallback ---------- */
 var worker=null,useWorker=false,workerURL=null;
-var workerSource='const doMatch='+doMatch.toString()+';self.onmessage=function(e){var d=e.data;var r=doMatch(d.pattern,d.flags,d.subject,d.replaceStr);r.jobId=d.jobId;self.postMessage(r);};';
+var workerSource='const doMatch='+doMatch.toString()+';self.onmessage=function(e){var d=e.data;var r=doMatch(d.pattern,d.flags,d.subject,d.replaceStr,d.tests);r.jobId=d.jobId;self.postMessage(r);};';
 function spawnWorker(){
   try{
     if(!workerURL)workerURL=URL.createObjectURL(new Blob([workerSource],{type:'application/javascript'}));
@@ -1081,6 +1104,54 @@ function buildFlags(){
   });
 }
 
+/* ---------- static ReDoS heuristic: unbounded quantifier wrapping a group that itself has an unbounded quantifier ---------- */
+function redosRisk(pattern){
+  let ast;try{ast=parsePattern(pattern);}catch(e){return false;}
+  function hasUnb(n){
+    if(Array.isArray(n))return n.some(hasUnb);
+    if(!n||typeof n!=='object')return false;
+    if(n.type==='quantifier')return (n.max===Infinity&&n.child&&n.child.type!=='literal'&&hasUnb(n.child))||n.max===Infinity||hasUnb(n.child);
+    if(n.type==='group')return hasUnb(n.body);
+    if(n.type==='alternation')return n.options.some(hasUnb);
+    return false;
+  }
+  function walk(n){
+    if(Array.isArray(n))return n.some(walk);
+    if(!n||typeof n!=='object')return false;
+    if(n.type==='quantifier'){
+      if(n.max>1&&n.child&&n.child.type==='group'&&hasUnb(n.child.body))return true;
+      return walk(n.child);
+    }
+    if(n.type==='group')return walk(n.body);
+    if(n.type==='alternation')return n.options.some(walk);
+    return false;
+  }
+  return walk(ast);
+}
+
+/* ---------- test cases: "+ text" must match, "- text" must not ---------- */
+const testsEl=$('testsIn'),redosEl=$('redosMsg');
+function parseTests(){
+  const out=[];
+  (testsEl.value||'').split('\n').slice(0,300).forEach(l=>{
+    if(l.length>1&&(l[0]==='+'||l[0]==='-')&&l[1]===' ')out.push({s:l.slice(2),want:l[0]==='+'});
+  });
+  return out;
+}
+function renderTests(r){
+  const out=$('testsOut'),t=I18N[LANG];
+  const cases=parseTests();
+  if(!cases.length){out.innerHTML=`<div class="empty">${escHTML(t.testsEmpty)}</div>`;return;}
+  if(!patternEl.value||!r||r.error||!r.tests){out.innerHTML=`<div class="empty">${escHTML(r&&r.error?r.error:t.emptyPattern)}</div>`;return;}
+  let pass=0,html='';
+  cases.forEach((c,i)=>{
+    const res=r.tests[i]||{ok:false};if(res.ok)pass++;
+    html+=`<div class="trow ${res.ok?'ok':'bad'}"><span class="ti" aria-hidden="true">${res.ok?'✓':'✗'}</span><span>${escHTML(c.s)||'<i>""</i>'}${res.ok?'':` <small>— ${escHTML(c.want?t.testExpM:t.testExpN)}</small>`}</span></div>`;
+  });
+  out.innerHTML=`<div class="tsum">${escHTML(t.testsSum.replace('{p}',pass).replace('{n}',cases.length))}</div>`+html;
+}
+testsEl.addEventListener('input',()=>{persist();runMatch();});
+
 /* ---------- run pipeline ---------- */
 function runMatch(){
   const pattern=patternEl.value;
@@ -1091,20 +1162,21 @@ function runMatch(){
   ledEl.classList.toggle('bad',!valid&&!!pattern);
   statusTextEl.textContent=valid?I18N[LANG].validS:I18N[LANG].errorS;
   errMsgEl.textContent=valid?'':errText;
+  redosEl.textContent=(valid&&pattern&&redosRisk(pattern))?'⚠ '+I18N[LANG].redosWarn:'';
   renderExplain(); // independent of execution
 
   if(!valid||!pattern){currentJob++;clearTimeout(watchdog);applyResult({matches:[],replaced:null,error:valid?null:errText,capped:false},0);return;}
 
   currentJob++;const job=currentJob;
-  const subject=subjectEl.value,flags=flagStr(false),replaceStr=replaceStrEl.value;
+  const subject=subjectEl.value,flags=flagStr(false),replaceStr=replaceStrEl.value,testCases=parseTests();
   const t0=performance.now();
   if(useWorker&&worker){
     clearTimeout(watchdog);
     watchdog=setTimeout(()=>onTimeout(job),TIMEOUT);
     worker._t0=t0;
-    worker.postMessage({jobId:job,pattern,flags,subject,replaceStr});
+    worker.postMessage({jobId:job,pattern,flags,subject,replaceStr,tests:testCases});
   }else{
-    const r=doMatch(pattern,flags,subject,replaceStr);
+    const r=doMatch(pattern,flags,subject,replaceStr,testCases);
     applyResult(r,performance.now()-t0);
   }
 }
@@ -1125,19 +1197,20 @@ function applyTimeout(){
   backdropEl.innerHTML=escHTML(subjectEl.value)+'\n';
   $('pane-matches').innerHTML=`<div class="empty warn">${escHTML(I18N[LANG].timeoutMsg)}</div>`;
   $('replaceOut').innerHTML=`<span style="color:var(--danger)">${escHTML(I18N[LANG].timeoutMsg)}</span>`;
+  $('testsOut').innerHTML=`<div class="empty warn">${escHTML(I18N[LANG].timeoutMsg)}</div>`;
 }
 function applyResult(r,ms){
   lastResult=r;
   if(r.error){
     statMatchesEl.textContent='0';statTimeEl.textContent='0.0 ms';leftCountEl.textContent='0';
     backdropEl.innerHTML=escHTML(subjectEl.value)+'\n';
-    renderMatches([]);renderReplace(r);renderCode();return;
+    renderMatches([]);renderReplace(r);renderCode();renderTests(r);return;
   }
   const matches=r.matches||[];
   statMatchesEl.textContent=String(matches.length)+(r.capped?'+':'');
   statTimeEl.textContent=(ms||0).toFixed(1)+' ms';
   leftCountEl.textContent=String(matches.length)+(r.capped?'+':'');
-  renderHighlight(matches);renderMatches(matches);renderReplace(r);renderCode();
+  renderHighlight(matches);renderMatches(matches);renderReplace(r);renderCode();renderTests(r);
 }
 
 /* ---------- highlight ---------- */
@@ -1230,6 +1303,23 @@ function phpQuote(p){ /* regex -> body of a PHP single-quoted string with ~ deli
       i+=2;continue;}
     o+=c==='~'?'\\~':(c==="'"?"\\'":c);i++;}
   return o;}
+/* rewrite JS named groups for engines that need (?P<n>…) — skips escapes and character classes */
+function convNamed(p,backref){
+  let o='',inCls=false;
+  for(let i=0;i<p.length;i++){
+    const c=p[i];
+    if(c==='\\'&&i+1<p.length){
+      const m=!inCls&&backref&&p.slice(i).match(/^\\k<([A-Za-z_]\w*)>/);
+      if(m){o+='(?P='+m[1]+')';i+=m[0].length-1;continue;}
+      o+=c+p[i+1];i++;continue;
+    }
+    if(inCls){if(c===']')inCls=false;o+=c;continue;}
+    if(c==='['){inCls=true;o+=c;continue;}
+    if(c==='('&&p.slice(i,i+3)==='(?<'&&!/^\(\?<[=!]/.test(p.slice(i,i+4))){o+='(?P<';i+=2;continue;}
+    o+=c;
+  }
+  return o;
+}
 function codeSnippets(pattern,flags){
   const jsLit=escSlash(pattern)||'(?:)';
   // Python: raw string, do NOT double backslashes; pick a quote not present
@@ -1241,13 +1331,13 @@ function codeSnippets(pattern,flags){
   const phpFlags=flags.replace('g','').replace('y','');
   // Go: inline (?ims) flags; raw backtick string, or quoted fallback if a backtick is present
   const goInline=['i','m','s'].filter(f=>flags.includes(f)).join('');
-  const goBody=(goInline?'(?'+goInline+')':'')+pattern;
+  const goBody=(goInline?'(?'+goInline+')':'')+convNamed(pattern,false);
   const goStr=goBody.indexOf('`')<0?'`'+goBody+'`':'"'+goBody.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"';
   return {
     JavaScript:`const re = /${jsLit}/${flags};\nconst matches = ${flags.includes('g')?'[...str.matchAll(re)]':'str.match(re)'};`,
-    Python:`import re\npat = re.compile(${pyStr(pattern)}${pflags})\nmatches = pat.findall(text)`,
-    PHP:`$re = '~${phpPat}~${phpFlags}';\npreg_match_all($re, $text, $matches);`,
-    Go:`re := regexp.MustCompile(${goStr})\nmatches := re.FindAllString(text, -1)`
+    Python:`import re\npat = re.compile(${pyStr(convNamed(pattern,true))}${pflags})\nmatches = pat.findall(text)`+(/\\[pP]\{/.test(pattern)?'\n# Note: the built-in re module has no \\p{...}; use the third-party regex module.':'')+(/\(\?<(?![=!])/.test(pattern)?'\n# Named groups rewritten as (?P<name>...).':''),
+    PHP:`$re = '~${phpPat}~${phpFlags}';\npreg_match_all($re, $text, $matches);`+(/\\[pP]\{/.test(pattern)&&!flags.includes('u')?'\n// Note: \\p{...} needs the u modifier in PCRE.':''),
+    Go:`re := regexp.MustCompile(${goStr})\nmatches := re.FindAllString(text, -1)`+(/\(\?<?[=!]|\\[1-9]|\\k</.test(pattern)?'\n// Note: Go (RE2) has no lookarounds or backreferences; this pattern will not compile.':'')
   };
 }
 function renderCode(){
@@ -1331,6 +1421,7 @@ function persist(){
   store.set('regexlab-subject',subjectEl.value);
   store.set('regexlab-replace',replaceStrEl.value);
   store.set('regexlab-lang',LANG);
+  store.set('regexlab-tests',testsEl.value);
 }
 function buildPermalink(){
   const p=encodeURIComponent(patternEl.value),f=[...activeFlags].join(''),
@@ -1370,7 +1461,7 @@ $('copyRegexBtn').onclick=()=>copyText(`/${escSlash(patternEl.value)||'(?:)'}/${
 $('copyLinkBtn').onclick=()=>{const sp=$('copyLinkBtn').querySelector('span');copyText(buildPermalink(),sp);};
 $('resetBtn').onclick=()=>{
   patternEl.value='([A-Za-z]+)\\s(\\d+)';activeFlags=new Set(['g']);replaceStrEl.value='$2 $1';
-  subjectEl.value=SAMPLE[LANG];if(history.replaceState)history.replaceState(null,'',location.pathname);
+  subjectEl.value=SAMPLE[LANG];testsEl.value='';if(history.replaceState)history.replaceState(null,'',location.pathname);
   buildFlags();persist();runMatch();
 };
 
@@ -1393,6 +1484,7 @@ $('resetBtn').onclick=()=>{
     const sf=store.get('regexlab-flags');if(sf!==null)activeFlags=new Set(sf.split('').filter(x=>FLAGS.includes(x)));
     const ss=store.get('regexlab-subject');if(ss!==null)subjectEl.value=ss;else subjectEl.value=SAMPLE[LANG];
     const sr=store.get('regexlab-replace');if(sr!==null)replaceStrEl.value=sr;
+    const st=store.get('regexlab-tests');if(st!==null)testsEl.value=st;
   }
   if(!subjectEl.value)subjectEl.value=SAMPLE[LANG];
   applyLang();
