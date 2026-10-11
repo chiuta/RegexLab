@@ -14,7 +14,7 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 
 ## Funcții
 
-- Câmp pentru model (`/.../`), fanioane `g i m s u y`, indicator de validitate („valid” / eroare), număr de potriviri și timp de execuție.
+- Câmp pentru model (`/.../`), fanioane `g i m s u v y` (`u` și `v` se exclud reciproc), indicator de validitate („valid” / eroare), număr de potriviri și timp de execuție.
 - Zona **Test string** cu evidențierea potrivirilor.
 - Fila **Tests**: cazuri de test, un caz pe linie — `+ text` trebuie să se potrivească, `- text` nu; se afișează reușit/eșuat pe caz și totalul (evaluate în același Web Worker, cu aceeași limită de timp).
 - Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
@@ -46,6 +46,9 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
 ## Istoric / Changelog
+
+### 11 octombrie 2026 (a treia trecere)
+- Fanionul `v` (unicodeSets: operații pe mulțimi, ex. `[\p{L}--[a-z]]`); `u` și `v` se exclud reciproc, iar fragmentele Python/PHP îl tratează ca `u`. CSP: hash recalculat.
 
 ### 11 octombrie 2026 (a doua trecere)
 - Filă **Tests** cu cazuri `+`/`-`; avertisment euristic pentru cuantificatori imbricați; fragmente Python/Go/PHP corectate pentru grupuri numite și cu note de compatibilitate; texte noi în cele 7 limbi. CSP: hash recalculat.

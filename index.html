@@ -28,7 +28,7 @@
 /* Accesibilitate: inel de focus vizibil pentru navigare la tastatură. */
 :focus-visible{outline:2px solid #4a90d9;outline-offset:2px;border-radius:2px}
 </style>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' blob: 'sha256-u4oEGoVapwmc1cid3ZVII85xoBo6RU0GowEWWCmSqxY='; connect-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' blob: 'sha256-eocbdYZp4ghRezitMZ6vgv1GVEgu/4rnRg8pHjTLSqg='; connect-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RegexLab — regular-expression laboratory</title>
 <meta name="description" content="An offline regular-expression laboratory: live tester, plain-language explanation, replace, code export, pattern library and reference. No server, no account, no telemetry. One HTML file.">
@@ -100,6 +100,7 @@
   .flag .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg);
     border:1px solid var(--line);color:var(--txt);font-family:var(--sans);font-size:11px;padding:5px 9px;border-radius:6px;
     white-space:nowrap;opacity:0;pointer-events:none;transition:.12s;z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  .flag:nth-last-child(-n+2) .tip{left:auto;right:0;transform:none}
   .flag:hover .tip{opacity:1}
   .pat-status{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
   .pat-status .err-msg{color:var(--danger)}
@@ -394,7 +395,7 @@ const I18N={
     supportH:'Support the project',supportBody:'If you find it useful and want to support the work, you can do so here:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Website',contact:'Contact',closeLbl:'Close',
     footL:'single file · zero server · runs entirely in the browser',footR:'built in the spirit of',
-    flagTips:{g:'global — all matches',i:'case-insensitive',m:'multiline — ^ and $ per line',s:'dotAll — . matches newline',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — all matches',i:'case-insensitive',m:'multiline — ^ and $ per line',s:'dotAll — . matches newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   ro:{tagline:'laborator de expresii regulate · offline',themeToggle:'Temă',aboutBtn:'Despre',
     matchesLabel:'potriviri:',timeLabel:'timp:',validS:'valid',errorS:'eroare',subjectTitle:'Text de testare',
     tabMatches:'Potriviri',tabExplain:'Explicație',tabReplace:'Înlocuire',tabCode:'Cod',tabLibrary:'Bibliotecă',tabCheat:'Referință',
@@ -413,7 +414,7 @@ const I18N={
     supportH:'Susține proiectul',supportBody:'Dacă îți este de folos și vrei să susții munca, o poți face aici:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Închide',
     footL:'un singur fișier · zero server · rulează complet în browser',footR:'construit în spiritul',
-    flagTips:{g:'global — toate potrivirile',i:'insensibil la majuscule',m:'multilinie — ^ și $ pe fiecare rând',s:'dotAll — . include newline',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — toate potrivirile',i:'insensibil la majuscule',m:'multilinie — ^ și $ pe fiecare rând',s:'dotAll — . include newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   fr:{tagline:'laboratoire d’expressions régulières · hors-ligne',themeToggle:'Thème',aboutBtn:'À propos',
     matchesLabel:'correspondances :',timeLabel:'temps :',validS:'valide',errorS:'erreur',subjectTitle:'Texte de test',
     tabMatches:'Correspondances',tabExplain:'Explication',tabReplace:'Remplacer',tabCode:'Code',tabLibrary:'Bibliothèque',tabCheat:'Référence',
@@ -432,7 +433,7 @@ const I18N={
     supportH:'Soutenir le projet',supportBody:'S’il vous est utile et que vous souhaitez soutenir ce travail, vous pouvez le faire ici :',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Fermer',
     footL:'fichier unique · zéro serveur · fonctionne entièrement dans le navigateur',footR:'construit dans l’esprit du',
-    flagTips:{g:'global — toutes les correspondances',i:'insensible à la casse',m:'multiligne — ^ et $ par ligne',s:'dotAll — . inclut le saut de ligne',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — toutes les correspondances',i:'insensible à la casse',m:'multiligne — ^ et $ par ligne',s:'dotAll — . inclut le saut de ligne',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   it:{tagline:'laboratorio di espressioni regolari · offline',themeToggle:'Tema',aboutBtn:'Info',
     matchesLabel:'corrispondenze:',timeLabel:'tempo:',validS:'valido',errorS:'errore',subjectTitle:'Testo di prova',
     tabMatches:'Corrispondenze',tabExplain:'Spiegazione',tabReplace:'Sostituisci',tabCode:'Codice',tabLibrary:'Libreria',tabCheat:'Riferimento',
@@ -451,7 +452,7 @@ const I18N={
     supportH:'Sostieni il progetto',supportBody:'Se ti è utile e vuoi sostenere il lavoro, puoi farlo qui:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sito web',contact:'Contatto',closeLbl:'Chiudi',
     footL:'file singolo · zero server · funziona interamente nel browser',footR:'costruito nello spirito di',
-    flagTips:{g:'global — tutte le corrispondenze',i:'senza distinzione maiuscole',m:'multilinea — ^ e $ per riga',s:'dotAll — . include il newline',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — tutte le corrispondenze',i:'senza distinzione maiuscole',m:'multilinea — ^ e $ per riga',s:'dotAll — . include il newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   es:{tagline:'laboratorio de expresiones regulares · sin conexión',themeToggle:'Tema',aboutBtn:'Acerca de',
     matchesLabel:'coincidencias:',timeLabel:'tiempo:',validS:'válido',errorS:'error',subjectTitle:'Texto de prueba',
     tabMatches:'Coincidencias',tabExplain:'Explicación',tabReplace:'Reemplazar',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referencia',
@@ -470,7 +471,7 @@ const I18N={
     supportH:'Apoya el proyecto',supportBody:'Si te resulta útil y quieres apoyar el trabajo, puedes hacerlo aquí:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sitio web',contact:'Contacto',closeLbl:'Cerrar',
     footL:'archivo único · cero servidor · funciona enteramente en el navegador',footR:'construido en el espíritu de',
-    flagTips:{g:'global — todas las coincidencias',i:'sin distinción de mayúsculas',m:'multilínea — ^ y $ por línea',s:'dotAll — . incluye el salto de línea',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — todas las coincidencias',i:'sin distinción de mayúsculas',m:'multilínea — ^ y $ por línea',s:'dotAll — . incluye el salto de línea',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   pt:{tagline:'laboratório de expressões regulares · offline',themeToggle:'Tema',aboutBtn:'Sobre',
     matchesLabel:'correspondências:',timeLabel:'tempo:',validS:'válido',errorS:'erro',subjectTitle:'Texto de teste',
     tabMatches:'Correspondências',tabExplain:'Explicação',tabReplace:'Substituir',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referência',
@@ -489,7 +490,7 @@ const I18N={
     supportH:'Apoie o projeto',supportBody:'Se lhe for útil e quiser apoiar o trabalho, pode fazê-lo aqui:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site',contact:'Contacto',closeLbl:'Fechar',
     footL:'ficheiro único · zero servidor · corre inteiramente no navegador',footR:'construído no espírito do',
-    flagTips:{g:'global — todas as correspondências',i:'ignora maiúsculas',m:'multilinha — ^ e $ por linha',s:'dotAll — . inclui newline',u:'unicode',y:'sticky'}},
+    flagTips:{g:'global — todas as correspondências',i:'ignora maiúsculas',m:'multilinha — ^ e $ por linha',s:'dotAll — . inclui newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
   de:{tagline:'Labor für reguläre Ausdrücke · offline',themeToggle:'Thema',aboutBtn:'Über',
     matchesLabel:'Treffer:',timeLabel:'Zeit:',validS:'gültig',errorS:'Fehler',subjectTitle:'Testtext',
     tabMatches:'Treffer',tabExplain:'Erklärung',tabReplace:'Ersetzen',tabCode:'Code',tabLibrary:'Bibliothek',tabCheat:'Referenz',
@@ -508,7 +509,7 @@ const I18N={
     supportH:'Das Projekt unterstützen',supportBody:'Wenn es dir nützlich ist und du die Arbeit unterstützen möchtest, kannst du das hier tun:',
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Webseite',contact:'Kontakt',closeLbl:'Schließen',
     footL:'Einzeldatei · null Server · läuft vollständig im Browser',footR:'gebaut im Geist von',
-    flagTips:{g:'global — alle Treffer',i:'Groß-/Kleinschreibung ignorieren',m:'mehrzeilig — ^ und $ pro Zeile',s:'dotAll — . trifft Zeilenumbruch',u:'unicode',y:'sticky'}}
+    flagTips:{g:'global — alle Treffer',i:'Groß-/Kleinschreibung ignorieren',m:'mehrzeilig — ^ und $ pro Zeile',s:'dotAll — . trifft Zeilenumbruch',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}}
 };
 
 /* ---------- localized sample text ---------- */
@@ -517,7 +518,7 @@ const SAMPLE={
 
 Step 1: type a pattern in the top bar, between the two slashes. Start simple: \\d+ finds every number, \\w+ finds every word.
 
-Step 2: toggle the flags g i m s u y on the right. Hover any of them for an explanation. "g" finds all matches, "i" ignores case.
+Step 2: toggle the flags g i m s u v y on the right. Hover any of them for an explanation. "g" finds all matches, "i" ignores case.
 
 Step 3: write the text you want to test here, on the left. Matches are highlighted in colour, live.
 
@@ -534,7 +535,7 @@ Phone: +1 555 010 2030. Meeting on 2026-05-08.`,
 
 Pasul 1: scrie un pattern în bara de sus, între cele două bare oblice. Începe simplu: \\d+ găsește toate numerele, iar \\w+ găsește toate cuvintele.
 
-Pasul 2: comută flag-urile g i m s u y din dreapta. Treci cu mouse-ul peste fiecare pentru explicație. "g" caută toate potrivirile, "i" ignoră majusculele.
+Pasul 2: comută flag-urile g i m s u v y din dreapta. Treci cu mouse-ul peste fiecare pentru explicație. "g" caută toate potrivirile, "i" ignoră majusculele.
 
 Pasul 3: scrie aici, în stânga, textul de testat. Potrivirile se evidențiază colorat, pe loc.
 
@@ -551,7 +552,7 @@ Telefon: 0722 333 444. Cod: #FFB627. Întâlnire pe 2026-05-08 la FTMB Bucureșt
 
 Étape 1 : saisissez un motif dans la barre du haut, entre les deux barres obliques. Commencez simplement : \\d+ trouve tous les nombres, \\w+ trouve tous les mots.
 
-Étape 2 : activez les drapeaux g i m s u y à droite. Survolez-en un pour une explication. "g" trouve toutes les correspondances, "i" ignore la casse.
+Étape 2 : activez les drapeaux g i m s u v y à droite. Survolez-en un pour une explication. "g" trouve toutes les correspondances, "i" ignore la casse.
 
 Étape 3 : écrivez ici, à gauche, le texte à tester. Les correspondances sont surlignées en couleur, en direct.
 
@@ -568,7 +569,7 @@ Téléphone : +33 6 12 34 56. Réunion le 2026-05-08.`,
 
 Passo 1: scrivi un pattern nella barra in alto, tra le due barre oblique. Inizia semplice: \\d+ trova tutti i numeri, \\w+ trova tutte le parole.
 
-Passo 2: attiva i flag g i m s u y a destra. Passa il mouse su ciascuno per una spiegazione. "g" trova tutte le corrispondenze, "i" ignora le maiuscole.
+Passo 2: attiva i flag g i m s u v y a destra. Passa il mouse su ciascuno per una spiegazione. "g" trova tutte le corrispondenze, "i" ignora le maiuscole.
 
 Passo 3: scrivi qui, a sinistra, il testo da provare. Le corrispondenze vengono evidenziate a colori, in tempo reale.
 
@@ -585,7 +586,7 @@ Telefono: +39 333 010 2030. Riunione il 2026-05-08.`,
 
 Paso 1: escribe un patrón en la barra superior, entre las dos barras. Empieza simple: \\d+ encuentra todos los números, \\w+ encuentra todas las palabras.
 
-Paso 2: activa los flags g i m s u y a la derecha. Pasa el ratón por cada uno para ver una explicación. "g" encuentra todas las coincidencias, "i" ignora mayúsculas.
+Paso 2: activa los flags g i m s u v y a la derecha. Pasa el ratón por cada uno para ver una explicación. "g" encuentra todas las coincidencias, "i" ignora mayúsculas.
 
 Paso 3: escribe aquí, a la izquierda, el texto a probar. Las coincidencias se resaltan en color, en vivo.
 
@@ -602,7 +603,7 @@ Teléfono: +34 600 010 203. Reunión el 2026-05-08.`,
 
 Passo 1: escreva um padrão na barra de cima, entre as duas barras. Comece simples: \\d+ encontra todos os números, \\w+ encontra todas as palavras.
 
-Passo 2: ative as flags g i m s u y à direita. Passe o rato sobre cada uma para uma explicação. "g" encontra todas as correspondências, "i" ignora maiúsculas.
+Passo 2: ative as flags g i m s u v y à direita. Passe o rato sobre cada uma para uma explicação. "g" encontra todas as correspondências, "i" ignora maiúsculas.
 
 Passo 3: escreva aqui, à esquerda, o texto a testar. As correspondências são realçadas a cor, ao vivo.
 
@@ -619,7 +620,7 @@ Telefone: +351 910 010 203. Reunião a 2026-05-08.`,
 
 Schritt 1: Gib oben in der Leiste ein Muster ein, zwischen den beiden Schrägstrichen. Fang einfach an: \\d+ findet alle Zahlen, \\w+ findet alle Wörter.
 
-Schritt 2: Schalte rechts die Flags g i m s u y um. Fahre über jedes für eine Erklärung. "g" findet alle Treffer, "i" ignoriert Groß-/Kleinschreibung.
+Schritt 2: Schalte rechts die Flags g i m s u v y um. Fahre über jedes für eine Erklärung. "g" findet alle Treffer, "i" ignoriert Groß-/Kleinschreibung.
 
 Schritt 3: Schreibe hier links den zu testenden Text. Treffer werden farbig hervorgehoben, in Echtzeit.
 
@@ -1048,7 +1049,7 @@ function doMatch(pattern,flags,subject,replaceStr,tests){
       var groups=[];for(var k=1;k<m.length;k++){groups.push(m[k]===undefined?null:m[k]);}
       var named=null;if(m.groups){named={};for(var key in m.groups){named[key]=m.groups[key]===undefined?null:m.groups[key];}}
       res.matches.push({index:m.index,text:m[0],groups:groups,named:named});
-      if(m.index===re.lastIndex){var cc=subject.charCodeAt(re.lastIndex);re.lastIndex+=(re.unicode&&cc>=0xD800&&cc<=0xDBFF&&re.lastIndex+1<subject.length)?2:1;}
+      if(m.index===re.lastIndex){var cc=subject.charCodeAt(re.lastIndex);re.lastIndex+=((re.unicode||re.unicodeSets)&&cc>=0xD800&&cc<=0xDBFF&&re.lastIndex+1<subject.length)?2:1;}
       if(++guard>20000){res.capped=true;break;}
     }
   }catch(e){res.error=e.message;return res;}
@@ -1074,7 +1075,7 @@ function spawnWorker(){
 /* =========================================================
    STATE & DOM
    ========================================================= */
-const FLAGS=['g','i','m','s','u','y'];
+const FLAGS=['g','i','m','s','u','v','y'];
 const TIMEOUT=1500;
 const RENDER_CAP=500;
 let LANG='en';
@@ -1090,7 +1091,7 @@ const statMatchesEl=$('statMatches'),statTimeEl=$('statTime'),leftCountEl=$('lef
 
 function escHTML(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function escAttr(s){return escHTML(s).replace(/"/g,'&quot;');}
-function flagStr(forScan){let f=[...FLAGS].filter(x=>activeFlags.has(x)).join('');if(forScan){f=f.replace('y','');if(f.indexOf('g')<0)f+='g';}return f;}
+function flagStr(forScan){let f=[...FLAGS].filter(x=>activeFlags.has(x)&&!(x==='u'&&activeFlags.has('v'))).join('');if(forScan){f=f.replace('y','');if(f.indexOf('g')<0)f+='g';}return f;}
 
 /* ---------- flags ---------- */
 function buildFlags(){
@@ -1099,7 +1100,7 @@ function buildFlags(){
     const b=document.createElement('button');
     b.className='flag'+(activeFlags.has(f)?' on':'');b.dataset.flag=f;b.type='button';
     b.innerHTML=`${f}<span class="tip">${escHTML(I18N[LANG].flagTips[f])}</span>`;
-    b.onclick=()=>{activeFlags.has(f)?activeFlags.delete(f):activeFlags.add(f);b.classList.toggle('on');persist();runMatch();};
+    b.onclick=()=>{if(activeFlags.has(f))activeFlags.delete(f);else{activeFlags.add(f);if(f==='u')activeFlags.delete('v');if(f==='v')activeFlags.delete('u');}buildFlags();persist();runMatch();};
     c.appendChild(b);
   });
 }
@@ -1324,11 +1325,11 @@ function codeSnippets(pattern,flags){
   const jsLit=escSlash(pattern)||'(?:)';
   // Python: raw string, do NOT double backslashes; pick a quote not present
   const pyStr=p=>p.indexOf('"')<0?'r"'+p+'"':(p.indexOf("'")<0?"r'"+p+"'":'"'+p.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"');
-  const pf=[];if(flags.includes('i'))pf.push('re.I');if(flags.includes('m'))pf.push('re.M');if(flags.includes('s'))pf.push('re.S');if(flags.includes('u'))pf.push('re.U');
+  const pf=[];if(flags.includes('i'))pf.push('re.I');if(flags.includes('m'))pf.push('re.M');if(flags.includes('s'))pf.push('re.S');if(/[uv]/.test(flags))pf.push('re.U');
   const pflags=pf.length?', '+pf.join('|'):'';
   // PHP: ~ delimiter (escape ~ for regex, ' for the single-quoted string)
   const phpPat=phpQuote(pattern);
-  const phpFlags=flags.replace('g','').replace('y','');
+  const phpFlags=flags.replace('g','').replace('y','').replace('v','u');
   // Go: inline (?ims) flags; raw backtick string, or quoted fallback if a backtick is present
   const goInline=['i','m','s'].filter(f=>flags.includes(f)).join('');
   const goBody=(goInline?'(?'+goInline+')':'')+convNamed(pattern,false);
@@ -1336,7 +1337,7 @@ function codeSnippets(pattern,flags){
   return {
     JavaScript:`const re = /${jsLit}/${flags};\nconst matches = ${flags.includes('g')?'[...str.matchAll(re)]':'str.match(re)'};`,
     Python:`import re\npat = re.compile(${pyStr(convNamed(pattern,true))}${pflags})\nmatches = pat.findall(text)`+(/\\[pP]\{/.test(pattern)?'\n# Note: the built-in re module has no \\p{...}; use the third-party regex module.':'')+(/\(\?<(?![=!])/.test(pattern)?'\n# Named groups rewritten as (?P<name>...).':''),
-    PHP:`$re = '~${phpPat}~${phpFlags}';\npreg_match_all($re, $text, $matches);`+(/\\[pP]\{/.test(pattern)&&!flags.includes('u')?'\n// Note: \\p{...} needs the u modifier in PCRE.':''),
+    PHP:`$re = '~${phpPat}~${phpFlags}';\npreg_match_all($re, $text, $matches);`+(/\\[pP]\{/.test(pattern)&&!/[uv]/.test(flags)?'\n// Note: \\p{...} needs the u modifier in PCRE.':''),
     Go:`re := regexp.MustCompile(${goStr})\nmatches := re.FindAllString(text, -1)`+(/\(\?<?[=!]|\\[1-9]|\\k</.test(pattern)?'\n// Note: Go (RE2) has no lookarounds or backreferences; this pattern will not compile.':'')
   };
 }
