@@ -28,7 +28,9 @@
 /* Accesibilitate: inel de focus vizibil pentru navigare la tastatură. */
 :focus-visible{outline:2px solid #4a90d9;outline-offset:2px;border-radius:2px}
 </style>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' blob: 'sha256-eocbdYZp4ghRezitMZ6vgv1GVEgu/4rnRg8pHjTLSqg='; connect-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; script-src 'self' blob: 'sha256-/dJvRxltARimZenpwK1Dt3b7eTsESV+XsFIeyR1BJkY='; connect-src 'self'">
+<meta name="application-version" content="1.0.0">
+<meta name="last-updated" content="2026-10-12">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RegexLab — regular-expression laboratory</title>
 <meta name="description" content="An offline regular-expression laboratory: live tester, plain-language explanation, replace, code export, pattern library and reference. No server, no account, no telemetry. One HTML file.">
@@ -351,6 +353,7 @@
         <a href="https://chiuta.github.io" target="_blank" rel="noopener noreferrer" data-i18n="visitSite">Website</a>
         <a href="mailto:alexio@trom.tf" data-i18n="contact">Contact</a>
       </div>
+      <p id="app-version" style="margin:14px 0 0;font-size:12px;color:var(--muted)"><span data-i18n="versionLabel">Version</span> v 1.0.0 · 2026-10-12</p>
     </div>
   </div>
 </div>
@@ -377,7 +380,7 @@ const LANGS=[
    I18N — UI labels (7 languages, identical key sets)
    ========================================================= */
 const I18N={
-  en:{tagline:'regular-expression laboratory · offline',themeToggle:'Theme',aboutBtn:'About',
+  en:{versionLabel:'Version',tagline:'regular-expression laboratory · offline',themeToggle:'Theme',aboutBtn:'About',
     matchesLabel:'matches:',timeLabel:'time:',validS:'valid',errorS:'error',subjectTitle:'Test string',
     tabMatches:'Matches',tabExplain:'Explanation',tabReplace:'Replace',tabCode:'Code',tabLibrary:'Library',tabCheat:'Reference',
     tabTests:'Tests',testsHint:'One case per line: "+ text" must match, "- text" must not match. Other lines are ignored.',testsSum:'{p} of {n} passed',redosWarn:'Warning: nested quantifiers — risk of catastrophic backtracking on long non-matching input.',testsEmpty:'No test cases yet.',testExpM:'expected a match',testExpN:'expected no match',
@@ -396,7 +399,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Website',contact:'Contact',closeLbl:'Close',
     footL:'single file · zero server · runs entirely in the browser',footR:'built in the spirit of',
     flagTips:{g:'global — all matches',i:'case-insensitive',m:'multiline — ^ and $ per line',s:'dotAll — . matches newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  ro:{tagline:'laborator de expresii regulate · offline',themeToggle:'Temă',aboutBtn:'Despre',
+  ro:{versionLabel:'Versiune',tagline:'laborator de expresii regulate · offline',themeToggle:'Temă',aboutBtn:'Despre',
     matchesLabel:'potriviri:',timeLabel:'timp:',validS:'valid',errorS:'eroare',subjectTitle:'Text de testare',
     tabMatches:'Potriviri',tabExplain:'Explicație',tabReplace:'Înlocuire',tabCode:'Cod',tabLibrary:'Bibliotecă',tabCheat:'Referință',
     tabTests:'Teste',testsHint:'Un caz pe linie: „+ text” trebuie să se potrivească, „- text” nu trebuie. Celelalte linii sunt ignorate.',testsSum:'{p} din {n} reușite',redosWarn:'Atenție: cuantificatori imbricați — risc de backtracking catastrofic pe texte lungi fără potrivire.',testsEmpty:'Niciun caz de test încă.',testExpM:'se aștepta potrivire',testExpN:'se aștepta nicio potrivire',
@@ -415,7 +418,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Închide',
     footL:'un singur fișier · zero server · rulează complet în browser',footR:'construit în spiritul',
     flagTips:{g:'global — toate potrivirile',i:'insensibil la majuscule',m:'multilinie — ^ și $ pe fiecare rând',s:'dotAll — . include newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  fr:{tagline:'laboratoire d’expressions régulières · hors-ligne',themeToggle:'Thème',aboutBtn:'À propos',
+  fr:{versionLabel:'Version',tagline:'laboratoire d’expressions régulières · hors-ligne',themeToggle:'Thème',aboutBtn:'À propos',
     matchesLabel:'correspondances :',timeLabel:'temps :',validS:'valide',errorS:'erreur',subjectTitle:'Texte de test',
     tabMatches:'Correspondances',tabExplain:'Explication',tabReplace:'Remplacer',tabCode:'Code',tabLibrary:'Bibliothèque',tabCheat:'Référence',
     tabTests:'Tests',testsHint:'Un cas par ligne : « + texte » doit correspondre, « - texte » ne doit pas. Les autres lignes sont ignorées.',testsSum:'{p} sur {n} réussis',redosWarn:'Attention : quantificateurs imbriqués — risque de retour-arrière catastrophique sur de longs textes sans correspondance.',testsEmpty:'Aucun cas de test.',testExpM:'correspondance attendue',testExpN:'aucune correspondance attendue',
@@ -434,7 +437,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site web',contact:'Contact',closeLbl:'Fermer',
     footL:'fichier unique · zéro serveur · fonctionne entièrement dans le navigateur',footR:'construit dans l’esprit du',
     flagTips:{g:'global — toutes les correspondances',i:'insensible à la casse',m:'multiligne — ^ et $ par ligne',s:'dotAll — . inclut le saut de ligne',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  it:{tagline:'laboratorio di espressioni regolari · offline',themeToggle:'Tema',aboutBtn:'Info',
+  it:{versionLabel:'Versione',tagline:'laboratorio di espressioni regolari · offline',themeToggle:'Tema',aboutBtn:'Info',
     matchesLabel:'corrispondenze:',timeLabel:'tempo:',validS:'valido',errorS:'errore',subjectTitle:'Testo di prova',
     tabMatches:'Corrispondenze',tabExplain:'Spiegazione',tabReplace:'Sostituisci',tabCode:'Codice',tabLibrary:'Libreria',tabCheat:'Riferimento',
     tabTests:'Test',testsHint:'Un caso per riga: «+ testo» deve corrispondere, «- testo» no. Le altre righe sono ignorate.',testsSum:'{p} su {n} superati',redosWarn:'Attenzione: quantificatori annidati — rischio di backtracking catastrofico su testi lunghi senza corrispondenza.',testsEmpty:'Nessun caso di test.',testExpM:'corrispondenza attesa',testExpN:'nessuna corrispondenza attesa',
@@ -453,7 +456,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sito web',contact:'Contatto',closeLbl:'Chiudi',
     footL:'file singolo · zero server · funziona interamente nel browser',footR:'costruito nello spirito di',
     flagTips:{g:'global — tutte le corrispondenze',i:'senza distinzione maiuscole',m:'multilinea — ^ e $ per riga',s:'dotAll — . include il newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  es:{tagline:'laboratorio de expresiones regulares · sin conexión',themeToggle:'Tema',aboutBtn:'Acerca de',
+  es:{versionLabel:'Versión',tagline:'laboratorio de expresiones regulares · sin conexión',themeToggle:'Tema',aboutBtn:'Acerca de',
     matchesLabel:'coincidencias:',timeLabel:'tiempo:',validS:'válido',errorS:'error',subjectTitle:'Texto de prueba',
     tabMatches:'Coincidencias',tabExplain:'Explicación',tabReplace:'Reemplazar',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referencia',
     tabTests:'Pruebas',testsHint:'Un caso por línea: «+ texto» debe coincidir, «- texto» no. Las demás líneas se ignoran.',testsSum:'{p} de {n} superadas',redosWarn:'Atención: cuantificadores anidados — riesgo de retroceso catastrófico con textos largos sin coincidencia.',testsEmpty:'Aún no hay casos de prueba.',testExpM:'se esperaba coincidencia',testExpN:'se esperaba que no coincidiera',
@@ -472,7 +475,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Sitio web',contact:'Contacto',closeLbl:'Cerrar',
     footL:'archivo único · cero servidor · funciona enteramente en el navegador',footR:'construido en el espíritu de',
     flagTips:{g:'global — todas las coincidencias',i:'sin distinción de mayúsculas',m:'multilínea — ^ y $ por línea',s:'dotAll — . incluye el salto de línea',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  pt:{tagline:'laboratório de expressões regulares · offline',themeToggle:'Tema',aboutBtn:'Sobre',
+  pt:{versionLabel:'Versão',tagline:'laboratório de expressões regulares · offline',themeToggle:'Tema',aboutBtn:'Sobre',
     matchesLabel:'correspondências:',timeLabel:'tempo:',validS:'válido',errorS:'erro',subjectTitle:'Texto de teste',
     tabMatches:'Correspondências',tabExplain:'Explicação',tabReplace:'Substituir',tabCode:'Código',tabLibrary:'Biblioteca',tabCheat:'Referência',
     tabTests:'Testes',testsHint:'Um caso por linha: «+ texto» deve corresponder, «- texto» não. As outras linhas são ignoradas.',testsSum:'{p} de {n} aprovados',redosWarn:'Atenção: quantificadores aninhados — risco de retrocesso catastrófico em textos longos sem correspondência.',testsEmpty:'Ainda sem casos de teste.',testExpM:'esperava-se correspondência',testExpN:'esperava-se nenhuma correspondência',
@@ -491,7 +494,7 @@ const I18N={
     patreon:'Patreon',bmc:'Buy Me a Coffee',visitSite:'Site',contact:'Contacto',closeLbl:'Fechar',
     footL:'ficheiro único · zero servidor · corre inteiramente no navegador',footR:'construído no espírito do',
     flagTips:{g:'global — todas as correspondências',i:'ignora maiúsculas',m:'multilinha — ^ e $ por linha',s:'dotAll — . inclui newline',u:'unicode',v:'unicodeSets — set operations',y:'sticky'}},
-  de:{tagline:'Labor für reguläre Ausdrücke · offline',themeToggle:'Thema',aboutBtn:'Über',
+  de:{versionLabel:'Version',tagline:'Labor für reguläre Ausdrücke · offline',themeToggle:'Thema',aboutBtn:'Über',
     matchesLabel:'Treffer:',timeLabel:'Zeit:',validS:'gültig',errorS:'Fehler',subjectTitle:'Testtext',
     tabMatches:'Treffer',tabExplain:'Erklärung',tabReplace:'Ersetzen',tabCode:'Code',tabLibrary:'Bibliothek',tabCheat:'Referenz',
     tabTests:'Tests',testsHint:'Ein Fall pro Zeile: „+ Text“ muss passen, „- Text“ darf nicht passen. Andere Zeilen werden ignoriert.',testsSum:'{p} von {n} bestanden',redosWarn:'Achtung: verschachtelte Quantoren — Gefahr von katastrophalem Backtracking bei langen Texten ohne Treffer.',testsEmpty:'Noch keine Testfälle.',testExpM:'Treffer erwartet',testExpN:'kein Treffer erwartet',

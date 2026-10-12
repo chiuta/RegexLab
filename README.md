@@ -1,10 +1,10 @@
 # RegexLab
 
+**Versiune:** 1.0.0 · **Ultima actualizare:** 12 octombrie 2026
+
 Laborator de expresii regulate: testare în timp real, explicații, înlocuire, fragmente de cod și bibliotecă de modele, într-un singur fișier HTML.
 
 **Live:** https://chiuta.github.io/RegexLab/
-
-**Ultima actualizare:** 11 octombrie 2026
 
 ![Captura de ecran](screenshot.png)
 
@@ -46,6 +46,9 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
 ## Istoric / Changelog
+
+### 12 octombrie 2026 — versiunea 1.0.0
+- 1.0.0 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație
 
 ### 11 octombrie 2026 (a treia trecere)
 - Fanionul `v` (unicodeSets: operații pe mulțimi, ex. `[\p{L}--[a-z]]`); `u` și `v` se exclud reciproc, iar fragmentele Python/PHP îl tratează ca `u`. CSP: hash recalculat.
