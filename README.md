@@ -38,7 +38,7 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 ## Confidențialitate și rețea
 
 - **Stocare locală (localStorage):** șapte chei `regexlab-*`: `regexlab-pattern`, `regexlab-flags`, `regexlab-subject`, `regexlab-replace`, `regexlab-tests`, `regexlab-lang`, `regexlab-theme`. Rămân doar în browserul tău.
-- **Rețea:** în cod nu există cereri de rețea, scripturi sau fonturi externe. Fereastra About conține linkuri (Patreon, Buy Me a Coffee, site, contact) care se deschid doar la clic. Fără analytics sau telemetrie.
+- **Rețea:** în cod nu există cereri de rețea, scripturi sau fonturi externe. Fereastra About conține linkuri (Buy Me a Coffee, site, contact) care se deschid doar la clic. Fără analytics sau telemetrie.
 - Linkul creat cu **Copy link** include în URL modelul și textul de test; nu-l partaja dacă textul este sensibil.
 
 ## Rulare locală / offline
