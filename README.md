@@ -1,80 +1,82 @@
 # RegexLab
 
-**Versiune:** 1.1.0 · **Ultima actualizare:** 14 octombrie 2026
+**English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-Laborator de expresii regulate: testare în timp real, explicații, înlocuire, fragmente de cod și bibliotecă de modele, într-un singur fișier HTML.
+**Version:** 1.1.0 · **Last updated:** 2026-10-14
 
-**Live:** https://chiuta.github.io/RegexLab/
+A regular-expression laboratory: live testing, explanations, replacement, code snippets and a pattern library, in a single HTML file.
 
-![Captura de ecran](screenshot.png)
+**Live app:** https://chiuta.github.io/RegexLab/
 
-## Ce este
+![Screenshot](screenshot.png)
 
-RegexLab este un instrument pentru scrierea și testarea expresiilor regulate JavaScript direct în browser. Textul de test nu părăsește dispozitivul. Interfața are șapte limbi (engleză, română, franceză, italiană, spaniolă, portugheză, germană); limba implicită este engleza.
+## What it is
 
-## Funcții
+RegexLab is a tool for writing and testing JavaScript regular expressions right in the browser. The test text never leaves your device. The interface has seven languages (English, Romanian, French, Italian, Spanish, Portuguese, German); the default language is English.
 
-- Câmp pentru model (`/.../`), fanioane `g i m s u v y` (`u` și `v` se exclud reciproc), indicator de validitate („valid” / eroare), număr de potriviri și timp de execuție.
-- Zona **Test string** cu evidențierea potrivirilor.
-- Fila **Tests**: cazuri de test, un caz pe linie — `+ text` trebuie să se potrivească, `- text` nu; se afișează reușit/eșuat pe caz și totalul (evaluate în același Web Worker, cu aceeași limită de timp).
-- Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
-- Fragmentele de cod adaptează grupurile numite pentru Python/Go (`(?P<n>…)`) și adaugă note când sintaxa nu este disponibilă (Go: fără lookaround/backreferințe; Python: fără `\p{…}`; PHP: `\p{…}` cere modificatorul `u`).
-- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP și Go), **Library** (15 modele gata făcute, în șapte limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
-- Evaluarea rulează într-un Web Worker, cu limită de timp de 1500 ms și mesaj de avertizare la posibil „catastrophic backtracking”.
-- Butoane **Copy regex**, **Copy link** (permalink cu modelul, fanioanele, textul și înlocuirea în fragmentul `#` al URL-ului) și **Reset**.
-- Temă luminoasă / întunecată (**Theme**), fereastră **About**.
+## Features
 
-## Manual de utilizare
+- Pattern field (`/.../`), flags `g i m s u v y` (`u` and `v` are mutually exclusive), validity indicator ("valid" / error), match count and execution time.
+- **Test string** area with match highlighting.
+- **Tests** tab: test cases, one per line — `+ text` must match, `- text` must not; shows pass/fail per case and the total (evaluated in the same Web Worker, with the same time limit).
+- Static (heuristic) warning for nested quantifiers, before a timeout is reached.
+- The code snippets adapt named groups for Python/Go (`(?P<n>…)`) and add notes when the syntax is not available (Go: no lookaround/backreferences; Python: no `\p{…}`; PHP: `\p{…}` requires the `u` modifier).
+- Seven tabs: **Matches** (matches and groups), **Explanation** (explanation of the pattern), **Replace** (replacement with `$1`, `$2`, `$&`), **Code** (ready-to-paste snippets for JavaScript, Python, PHP and Go), **Library** (15 ready-made patterns, in seven languages), **Tests** (test cases) and **Reference** (reference sheet).
+- Evaluation runs in a Web Worker, with a 1500 ms time limit and a warning message for possible "catastrophic backtracking".
+- **Copy regex**, **Copy link** (permalink with the pattern, flags, text and replacement in the URL's `#` fragment) and **Reset** buttons.
+- Light / dark theme (**Theme**), **About** window.
 
-1. Deschide pagina și alege limba din lista derulantă de limbi din antet.
-2. Scrie modelul în câmpul de sus și bifează fanioanele dorite.
-3. Lipește sau scrie textul în **Test string**; rezultatele apar imediat în fila **Matches**.
-4. Deschide **Explanation** pentru o descompunere a modelului.
-5. În **Replace**, scrie șablonul de înlocuire (`$1`, `$2`, `$&`) și citește rezultatul.
-6. În **Code**, copiază fragmentul pentru limbajul dorit cu butonul ⧉.
-7. În **Library**, apasă un model pentru a-l încărca; în **Reference** găsești sintaxa de bază.
-8. **Copy link** creează un link cu starea curentă; **Reset** revine la exemplul implicit; **Esc** închide fereastra About.
+## User guide
 
-## Confidențialitate și rețea
+1. Open the page and choose the language from the language drop-down in the header.
+2. Type the pattern in the top field and tick the flags you want.
+3. Paste or type the text in **Test string**; the results appear immediately in the **Matches** tab.
+4. Open **Explanation** for a breakdown of the pattern.
+5. In **Replace**, type the replacement template (`$1`, `$2`, `$&`) and read the result.
+6. In **Code**, copy the snippet for the language you want with the ⧉ button.
+7. In **Library**, click a pattern to load it; in **Reference** you will find the basic syntax.
+8. **Copy link** creates a link with the current state; **Reset** returns to the default example; **Esc** closes the About window.
 
-- **Stocare locală (localStorage):** șapte chei `regexlab-*`: `regexlab-pattern`, `regexlab-flags`, `regexlab-subject`, `regexlab-replace`, `regexlab-tests`, `regexlab-lang`, `regexlab-theme`. Rămân doar în browserul tău.
-- **Rețea:** în cod nu există cereri de rețea, scripturi sau fonturi externe. Fereastra About conține linkuri (Buy Me a Coffee, site, contact) care se deschid doar la clic. Fără analytics sau telemetrie.
-- Linkul creat cu **Copy link** include în URL modelul și textul de test; nu-l partaja dacă textul este sensibil.
+## Privacy and network
 
-## Rulare locală / offline
+- **Local storage (localStorage):** seven `regexlab-*` keys: `regexlab-pattern`, `regexlab-flags`, `regexlab-subject`, `regexlab-replace`, `regexlab-tests`, `regexlab-lang`, `regexlab-theme`. They stay only in your browser.
+- **Network:** the code contains no network requests, external scripts or fonts. The About window contains links (Buy Me a Coffee, website, contact) that open only on click. No analytics or telemetry.
+- The link created with **Copy link** includes the pattern and the test text in the URL; do not share it if the text is sensitive.
 
-Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
+## Running locally / offline
 
-## Istoric / Changelog
+Download `index.html` and open it in a browser; it works without internet.
+
+## History / Changelog
 
 ### 1.1.0 — 2026-10-14
-- Copie de rezervă și etichetare date (fff-kit).
+- Backup copy and data labelling (fff-kit).
 
-### 12 octombrie 2026 — versiunea 1.0.0
-- 1.0.0 — 2026-10-12: versiunea și data ultimei actualizări sunt afișate în aplicație
+### 12 October 2026 — version 1.0.0
+- 1.0.0 — 2026-10-12: the version and the date of the last update are shown in the app
 
-### 11 octombrie 2026 (a treia trecere)
-- Fanionul `v` (unicodeSets: operații pe mulțimi, ex. `[\p{L}--[a-z]]`); `u` și `v` se exclud reciproc, iar fragmentele Python/PHP îl tratează ca `u`. CSP: hash recalculat.
+### 11 October 2026 (third pass)
+- The `v` flag (unicodeSets: set operations, e.g. `[\p{L}--[a-z]]`); `u` and `v` are mutually exclusive, and the Python/PHP snippets treat it as `u`. CSP: hash recalculated.
 
-### 11 octombrie 2026 (a doua trecere)
-- Filă **Tests** cu cazuri `+`/`-`; avertisment euristic pentru cuantificatori imbricați; fragmente Python/Go/PHP corectate pentru grupuri numite și cu note de compatibilitate; texte noi în cele 7 limbi. CSP: hash recalculat.
+### 11 October 2026 (second pass)
+- **Tests** tab with `+`/`-` cases; heuristic warning for nested quantifiers; Python/Go/PHP snippets fixed for named groups and with compatibility notes; new texts in all 7 languages. CSP: hash recalculated.
 
-### 11 octombrie 2026
-- Accesibilitate: conținutul principal este încadrat în `<main>` (antet și subsol rămân repere separate); axe-core raportează 0 încălcări la 1280 și 360 px.
-- CSP: `script-src` folosește hash SHA-256 în loc de `'unsafe-inline'` (workerul din `blob:` rămâne permis); verificat cu CSP activ: potrivirile și workerul funcționează.
+### 11 October 2026
+- Accessibility: the main content is wrapped in `<main>` (header and footer remain separate landmarks); axe-core reports 0 violations at 1280 and 360 px.
+- CSP: `script-src` uses a SHA-256 hash instead of `'unsafe-inline'` (the `blob:` worker is still allowed); verified with CSP active: matching and the worker work.
 
-## Licență
+## Licence
 
-MIT — vezi fișierul LICENSE.
+MIT — see the LICENSE file.
 
 ## Audit
 
-Audit: 2026-10-10 — afirmațiile din README (fără cereri de rețea, stocare doar în localStorage) corespund codului; fără `fetch`/CDN/WebSocket. Corecturi de contrast și ARIA.
+Audit: 2026-10-10 — the README's claims (no network requests, storage only in localStorage) match the code; no `fetch`/CDN/WebSocket. Contrast and ARIA fixes.
 
-## Autor
+## Author
 
 Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf
 
-## English summary
+## Summary
 
 RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go), a 15-pattern library and a reference sheet, in 7 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.
