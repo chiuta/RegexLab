@@ -10,7 +10,7 @@ Ein Labor für reguläre Ausdrücke: Echtzeit-Tests, Erklärungen, Ersetzung, Co
 
 **Online-Anwendung:** https://chiuta.github.io/RegexLab/
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot.de.png)
 
 ## Was es ist
 

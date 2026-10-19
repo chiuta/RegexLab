@@ -10,7 +10,7 @@ Reguláris kifejezések laboratóriuma: valós idejű tesztelés, magyarázatok,
 
 **Online alkalmazás:** https://chiuta.github.io/RegexLab/
 
-![Képernyőkép](screenshot.png)
+![Képernyőkép](screenshot.hu.png)
 
 ## Mi ez
 

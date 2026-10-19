@@ -10,7 +10,7 @@ A regular-expression laboratory: live testing, explanations, replacement, code s
 
 **Live app:** https://chiuta.github.io/RegexLab/
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot.en.png)
 
 ## What it is
 

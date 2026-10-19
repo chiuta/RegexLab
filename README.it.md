@@ -10,7 +10,7 @@ Laboratorio di espressioni regolari: test in tempo reale, spiegazioni, sostituzi
 
 **Applicazione online:** https://chiuta.github.io/RegexLab/
 
-![Schermata](screenshot.png)
+![Schermata](screenshot.it.png)
 
 ## Che cos'è
 

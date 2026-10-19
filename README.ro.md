@@ -10,7 +10,7 @@ Laborator de expresii regulate: testare în timp real, explicații, înlocuire, 
 
 **Live:** https://chiuta.github.io/RegexLab/
 
-![Captura de ecran](screenshot.png)
+![Captura de ecran](screenshot.ro.png)
 
 ## Ce este
 

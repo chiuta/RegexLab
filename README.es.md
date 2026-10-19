@@ -10,7 +10,7 @@ Laboratorio de expresiones regulares: pruebas en tiempo real, explicaciones, sus
 
 **Aplicación en línea:** https://chiuta.github.io/RegexLab/
 
-![Captura de pantalla](screenshot.png)
+![Captura de pantalla](screenshot.es.png)
 
 ## Qué es
 
