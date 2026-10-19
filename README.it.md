@@ -2,7 +2,9 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · **Italiano** · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versione:** 1.1.0 · **Ultimo aggiornamento:** 2026-10-14
+**Versione:** 1.2.0 · **Ultimo aggiornamento:** 2026-10-19
+
+Lingue dell'interfaccia: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
 Laboratorio di espressioni regolari: test in tempo reale, spiegazioni, sostituzione, frammenti di codice e libreria di modelli, in un unico file HTML.
 
@@ -12,7 +14,7 @@ Laboratorio di espressioni regolari: test in tempo reale, spiegazioni, sostituzi
 
 ## Che cos'è
 
-RegexLab è uno strumento per scrivere e testare espressioni regolari JavaScript direttamente nel browser. Il testo di prova non lascia il dispositivo. L'interfaccia ha sette lingue (inglese, rumeno, francese, italiano, spagnolo, portoghese, tedesco); la lingua predefinita è l'inglese.
+RegexLab è uno strumento per scrivere e testare espressioni regolari JavaScript direttamente nel browser. Il testo di prova non lascia il dispositivo. L'interfaccia ha otto lingue (inglese, rumeno, francese, italiano, spagnolo, portoghese, tedesco, ungherese); la lingua predefinita è l'inglese.
 
 ## Funzioni
 
@@ -21,7 +23,7 @@ RegexLab è uno strumento per scrivere e testare espressioni regolari JavaScript
 - Scheda **Tests**: casi di test, uno per riga — `+ testo` deve corrispondere, `- testo` no; mostra riuscito/fallito per ogni caso e il totale (valutati nello stesso Web Worker, con lo stesso limite di tempo).
 - Avviso statico (euristico) per i quantificatori annidati, prima di raggiungere il timeout.
 - I frammenti di codice adattano i gruppi con nome per Python/Go (`(?P<n>…)`) e aggiungono note quando la sintassi non è disponibile (Go: niente lookaround/backreference; Python: niente `\p{…}`; PHP: `\p{…}` richiede il modificatore `u`).
-- Sette schede: **Matches** (corrispondenze e gruppi), **Explanation** (spiegazione del modello), **Replace** (sostituzione con `$1`, `$2`, `$&`), **Code** (frammenti pronti da incollare per JavaScript, Python, PHP e Go), **Library** (15 modelli già pronti, in sette lingue), **Tests** (casi di test) e **Reference** (scheda di riferimento).
+- Sette schede: **Matches** (corrispondenze e gruppi), **Explanation** (spiegazione del modello), **Replace** (sostituzione con `$1`, `$2`, `$&`), **Code** (frammenti pronti da incollare per JavaScript, Python, PHP e Go), **Library** (15 modelli già pronti, in otto lingue), **Tests** (casi di test) e **Reference** (scheda di riferimento).
 - La valutazione viene eseguita in un Web Worker, con un limite di tempo di 1500 ms e un messaggio di avviso per un possibile "catastrophic backtracking".
 - Pulsanti **Copy regex**, **Copy link** (permalink con modello, flag, testo e sostituzione nel frammento `#` dell'URL) e **Reset**.
 - Tema chiaro / scuro (**Theme**), finestra **About**.
@@ -79,4 +81,4 @@ Alexio — Alexandru-Ionuț Chiuță. Contatto: alexio@trom.tf
 
 ## Riepilogo
 
-RegexLab è un laboratorio di espressioni regolari in un unico file: corrispondenza in tempo reale con evidenziazione, spiegazione, sostituzione, frammenti di codice (JavaScript, Python, PHP, Go), una libreria di 15 modelli e una scheda di riferimento, con interfaccia in 7 lingue. La corrispondenza viene eseguita in un Web Worker con un timeout di 1,5 s. Lo stato è conservato in localStorage; nessuna richiesta di rete né telemetria. Licenza MIT.
+RegexLab è un laboratorio di espressioni regolari in un unico file: corrispondenza in tempo reale con evidenziazione, spiegazione, sostituzione, frammenti di codice (JavaScript, Python, PHP, Go), una libreria di 15 modelli e una scheda di riferimento, con interfaccia in 8 lingue. La corrispondenza viene eseguita in un Web Worker con un timeout di 1,5 s. Lo stato è conservato in localStorage; nessuna richiesta di rete né telemetria. Licenza MIT.

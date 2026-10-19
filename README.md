@@ -2,7 +2,9 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.1.0 · **Last updated:** 2026-10-14
+**Version:** 1.2.0 · **Last updated:** 2026-10-19
+
+Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
 A regular-expression laboratory: live testing, explanations, replacement, code snippets and a pattern library, in a single HTML file.
 
@@ -12,7 +14,7 @@ A regular-expression laboratory: live testing, explanations, replacement, code s
 
 ## What it is
 
-RegexLab is a tool for writing and testing JavaScript regular expressions right in the browser. The test text never leaves your device. The interface has seven languages (English, Romanian, French, Italian, Spanish, Portuguese, German); the default language is English.
+RegexLab is a tool for writing and testing JavaScript regular expressions right in the browser. The test text never leaves your device. The interface has eight languages (English, Romanian, French, Italian, Spanish, Portuguese, German, Hungarian); the default language is English.
 
 ## Features
 
@@ -21,7 +23,7 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 - **Tests** tab: test cases, one per line — `+ text` must match, `- text` must not; shows pass/fail per case and the total (evaluated in the same Web Worker, with the same time limit).
 - Static (heuristic) warning for nested quantifiers, before a timeout is reached.
 - The code snippets adapt named groups for Python/Go (`(?P<n>…)`) and add notes when the syntax is not available (Go: no lookaround/backreferences; Python: no `\p{…}`; PHP: `\p{…}` requires the `u` modifier).
-- Seven tabs: **Matches** (matches and groups), **Explanation** (explanation of the pattern), **Replace** (replacement with `$1`, `$2`, `$&`), **Code** (ready-to-paste snippets for JavaScript, Python, PHP and Go), **Library** (15 ready-made patterns, in seven languages), **Tests** (test cases) and **Reference** (reference sheet).
+- Seven tabs: **Matches** (matches and groups), **Explanation** (explanation of the pattern), **Replace** (replacement with `$1`, `$2`, `$&`), **Code** (ready-to-paste snippets for JavaScript, Python, PHP and Go), **Library** (15 ready-made patterns, in eight languages), **Tests** (test cases) and **Reference** (reference sheet).
 - Evaluation runs in a Web Worker, with a 1500 ms time limit and a warning message for possible "catastrophic backtracking".
 - **Copy regex**, **Copy link** (permalink with the pattern, flags, text and replacement in the URL's `#` fragment) and **Reset** buttons.
 - Light / dark theme (**Theme**), **About** window.
@@ -79,4 +81,4 @@ Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf
 
 ## Summary
 
-RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go), a 15-pattern library and a reference sheet, in 7 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.
+RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go), a 15-pattern library and a reference sheet, in 8 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.

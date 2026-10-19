@@ -2,7 +2,9 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 1.1.0 · **Utolsó frissítés:** 2026-10-14
+**Verzió:** 1.2.0 · **Utolsó frissítés:** 2026-10-19
+
+A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
 Reguláris kifejezések laboratóriuma: valós idejű tesztelés, magyarázatok, csere, kódrészletek és mintakönyvtár, egyetlen HTML-fájlban.
 
@@ -12,7 +14,7 @@ Reguláris kifejezések laboratóriuma: valós idejű tesztelés, magyarázatok,
 
 ## Mi ez
 
-A RegexLab egy eszköz JavaScript reguláris kifejezések írására és tesztelésére közvetlenül a böngészőben. A tesztszöveg nem hagyja el az eszközt. A felület hét nyelvű (angol, román, francia, olasz, spanyol, portugál, német); az alapértelmezett nyelv az angol.
+A RegexLab egy eszköz JavaScript reguláris kifejezések írására és tesztelésére közvetlenül a böngészőben. A tesztszöveg nem hagyja el az eszközt. A felület nyolc nyelvű (angol, román, francia, olasz, spanyol, portugál, német, magyar); az alapértelmezett nyelv az angol.
 
 ## Funkciók
 
@@ -21,7 +23,7 @@ A RegexLab egy eszköz JavaScript reguláris kifejezések írására és tesztel
 - **Tests** lap: tesztesetek, soronként egy — a `+ szöveg` esetnek illeszkednie kell, a `- szöveg` esetnek nem; esetenként megjeleníti a sikert/hibát és az összesítést (ugyanabban a Web Workerben, ugyanazzal az időkorláttal értékeli ki).
 - Statikus (heurisztikus) figyelmeztetés az egymásba ágyazott kvantorokra, még az időtúllépés elérése előtt.
 - A kódrészletek a Pythonhoz/Gohoz igazítják a névvel ellátott csoportokat (`(?P<n>…)`), és megjegyzést fűznek hozzá, ha a szintaxis nem érhető el (Go: nincs lookaround/visszahivatkozás; Python: nincs `\p{…}`; PHP: a `\p{…}` a `u` módosítót igényli).
-- Hét lap: **Matches** (találatok és csoportok), **Explanation** (a minta magyarázata), **Replace** (csere `$1`, `$2`, `$&` használatával), **Code** (beillesztésre kész részletek JavaScripthez, Pythonhoz, PHP-hoz és Gohoz), **Library** (15 kész minta, hét nyelven), **Tests** (tesztesetek) és **Reference** (referencialap).
+- Hét lap: **Matches** (találatok és csoportok), **Explanation** (a minta magyarázata), **Replace** (csere `$1`, `$2`, `$&` használatával), **Code** (beillesztésre kész részletek JavaScripthez, Pythonhoz, PHP-hoz és Gohoz), **Library** (15 kész minta, nyolc nyelven), **Tests** (tesztesetek) és **Reference** (referencialap).
 - A kiértékelés Web Workerben fut, 1500 ms-os időkorláttal és figyelmeztető üzenettel az esetleges „catastrophic backtracking” esetére.
 - **Copy regex**, **Copy link** (állandó hivatkozás a mintával, a jelzőkkel, a szöveggel és a cserével az URL `#` töredékében) és **Reset** gombok.
 - Világos / sötét téma (**Theme**), **About** ablak.
@@ -79,4 +81,4 @@ Alexio — Alexandru-Ionuț Chiuță. Kapcsolat: alexio@trom.tf
 
 ## Összefoglaló
 
-A RegexLab egy egyfájlos reguláris kifejezés-laboratórium: élő illesztés kiemeléssel, magyarázat, csere, kódrészletek (JavaScript, Python, PHP, Go), egy 15 mintát tartalmazó könyvtár és egy referencialap, 7 nyelvű felülettel. Az illesztés Web Workerben fut, 1,5 s-os időkorláttal. Az állapotot a localStorage őrzi; nincsenek hálózati kérések vagy telemetria. MIT licenc.
+A RegexLab egy egyfájlos reguláris kifejezés-laboratórium: élő illesztés kiemeléssel, magyarázat, csere, kódrészletek (JavaScript, Python, PHP, Go), egy 15 mintát tartalmazó könyvtár és egy referencialap, 8 nyelvű felülettel. Az illesztés Web Workerben fut, 1,5 s-os időkorláttal. Az állapotot a localStorage őrzi; nincsenek hálózati kérések vagy telemetria. MIT licenc.

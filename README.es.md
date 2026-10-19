@@ -2,7 +2,9 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · **Español** · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versión:** 1.1.0 · **Última actualización:** 2026-10-14
+**Versión:** 1.2.0 · **Última actualización:** 2026-10-19
+
+Idiomas de la interfaz: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
 Laboratorio de expresiones regulares: pruebas en tiempo real, explicaciones, sustitución, fragmentos de código y biblioteca de patrones, en un único archivo HTML.
 
@@ -12,7 +14,7 @@ Laboratorio de expresiones regulares: pruebas en tiempo real, explicaciones, sus
 
 ## Qué es
 
-RegexLab es una herramienta para escribir y probar expresiones regulares de JavaScript directamente en el navegador. El texto de prueba no sale del dispositivo. La interfaz tiene siete idiomas (inglés, rumano, francés, italiano, español, portugués, alemán); el idioma predeterminado es el inglés.
+RegexLab es una herramienta para escribir y probar expresiones regulares de JavaScript directamente en el navegador. El texto de prueba no sale del dispositivo. La interfaz tiene ocho idiomas (inglés, rumano, francés, italiano, español, portugués, alemán, húngaro); el idioma predeterminado es el inglés.
 
 ## Funciones
 
@@ -21,7 +23,7 @@ RegexLab es una herramienta para escribir y probar expresiones regulares de Java
 - Pestaña **Tests**: casos de prueba, uno por línea — `+ texto` debe coincidir, `- texto` no; muestra acierto/fallo por caso y el total (evaluados en el mismo Web Worker, con el mismo límite de tiempo).
 - Aviso estático (heurístico) para cuantificadores anidados, antes de llegar al tiempo de espera.
 - Los fragmentos de código adaptan los grupos con nombre para Python/Go (`(?P<n>…)`) y añaden notas cuando la sintaxis no está disponible (Go: sin lookaround/referencias inversas; Python: sin `\p{…}`; PHP: `\p{…}` requiere el modificador `u`).
-- Siete pestañas: **Matches** (coincidencias y grupos), **Explanation** (explicación del patrón), **Replace** (sustitución con `$1`, `$2`, `$&`), **Code** (fragmentos listos para pegar para JavaScript, Python, PHP y Go), **Library** (15 patrones ya hechos, en siete idiomas), **Tests** (casos de prueba) y **Reference** (hoja de referencia).
+- Siete pestañas: **Matches** (coincidencias y grupos), **Explanation** (explicación del patrón), **Replace** (sustitución con `$1`, `$2`, `$&`), **Code** (fragmentos listos para pegar para JavaScript, Python, PHP y Go), **Library** (15 patrones ya hechos, en ocho idiomas), **Tests** (casos de prueba) y **Reference** (hoja de referencia).
 - La evaluación se ejecuta en un Web Worker, con un límite de tiempo de 1500 ms y un mensaje de advertencia ante un posible "catastrophic backtracking".
 - Botones **Copy regex**, **Copy link** (enlace permanente con el patrón, los indicadores, el texto y la sustitución en el fragmento `#` de la URL) y **Reset**.
 - Tema claro / oscuro (**Theme**), ventana **About**.
@@ -79,4 +81,4 @@ Alexio — Alexandru-Ionuț Chiuță. Contacto: alexio@trom.tf
 
 ## Resumen
 
-RegexLab es un laboratorio de expresiones regulares en un único archivo: coincidencia en vivo con resaltado, explicación, sustitución, fragmentos de código (JavaScript, Python, PHP, Go), una biblioteca de 15 patrones y una hoja de referencia, con interfaz en 7 idiomas. La coincidencia se ejecuta en un Web Worker con un tiempo de espera de 1,5 s. El estado se guarda en localStorage; sin solicitudes de red ni telemetría. Licencia MIT.
+RegexLab es un laboratorio de expresiones regulares en un único archivo: coincidencia en vivo con resaltado, explicación, sustitución, fragmentos de código (JavaScript, Python, PHP, Go), una biblioteca de 15 patrones y una hoja de referencia, con interfaz en 8 idiomas. La coincidencia se ejecuta en un Web Worker con un tiempo de espera de 1,5 s. El estado se guarda en localStorage; sin solicitudes de red ni telemetría. Licencia MIT.
