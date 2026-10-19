@@ -2,8 +2,8 @@
   "schema": 1,
   "slug": "regexlab",
   "name": "RegexLab — regular-expression laboratory",
-  "version": "1.1.0",
-  "updated": "2026-10-14",
+  "version": "1.2.0",
+  "updated": "2026-10-19",
   "description": "An offline regular-expression laboratory: live tester, plain-language explanation, replace, code export, pattern library and reference. No server, no account, no telemetry. One HTML file.",
   "egress": [],
   "permissions": [
@@ -13,8 +13,8 @@
     "Worker"
   ],
   "storageKeys": [],
-  "sizeBytes": 202087,
-  "sha256": "4c68da412a0704d96a692331a4849aac7f2387d3df3f25493f13be2d8c0f2735",
+  "sizeBytes": 210791,
+  "sha256": "ec4a7b9cebf2df739a5bb7c30159157500d786d0685437a0ad22d9f5454a00b0",
   "csp": {
     "present": true,
     "directives": {
@@ -44,6 +44,7 @@
       "it",
       "es",
       "pt",
+      "hu",
       "de"
     ],
     "pwa": {
