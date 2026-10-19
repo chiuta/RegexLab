@@ -79,6 +79,6 @@ Audit: 2026-10-10 — afirmațiile din README (fără cereri de rețea, stocare 
 
 Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf
 
-## English summary
+## Rezumat
 
-RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go), a 15-pattern library and a reference sheet, in 8 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.
+RegexLab este un laborator de expresii regulate într-un singur fișier: potrivire în direct cu evidențiere, explicație, înlocuire, fragmente de cod (JavaScript, Python, PHP, Go), o bibliotecă de 15 modele și o fișă de referință, în 8 limbi de interfață. Potrivirea rulează într-un Web Worker cu limită de 1,5 s. Starea se păstrează în localStorage; fără cereri de rețea sau telemetrie. Licență MIT.
