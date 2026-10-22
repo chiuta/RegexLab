@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · **Français** · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version :** 1.2.5 · **Dernière mise à jour :** 2026-10-22
+**Version :** 1.2.6 · **Dernière mise à jour :** 2026-10-22
 
 Langues de l'interface : **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,10 @@ RegexLab est un outil pour écrire et tester des expressions régulières JavaSc
 Téléchargez `index.html` et ouvrez-le dans un navigateur ; il fonctionne sans internet.
 
 ## Historique / Journal des modifications
+
+### 1.2.6 — 2026-10-22
+
+fff-kit 1.1.4 : cibles tactiles et taille de texte minimale.
 
 ### 1.2.5 — 2026-10-22
 - Limites de longueur pour le motif (10 000 caractères), le texte de test (200 000), le remplacement et les cas de test, avec un message traduit : coller 1 Mo ne fige plus la page (la recherche s’exécutait déjà dans un Web Worker avec délai d’expiration).
