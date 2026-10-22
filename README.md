@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.2.3 · **Last updated:** 2026-10-22
+**Version:** 1.2.4 · **Last updated:** 2026-10-22
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 Download `index.html` and open it in a browser; it works without internet.
 
 ## History / Changelog
+
+### 1.2.4 — 2026-10-22
+- fff-kit 1.1.2: PBKDF2 600,000 iterations, anti-clickjacking protection
 
 ### 1.2.3 — 2026-10-22
 - Mobile: small text raised to at least 12 px; the "copy matches" button and the footer link have larger tap targets (the ReDoS timeout in a Web Worker was already in place).
