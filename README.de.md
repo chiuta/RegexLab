@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.2.1 · **Zuletzt aktualisiert:** 2026-10-22
+**Version:** 1.2.2 · **Zuletzt aktualisiert:** 2026-10-22
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ RegexLab ist ein Werkzeug zum Schreiben und Testen von regulären JavaScript-Aus
 Laden Sie `index.html` herunter und öffnen Sie sie in einem Browser; sie funktioniert ohne Internet.
 
 ## Verlauf / Changelog
+
+### 1.2.2 — 2026-10-22
+- Die Beschriftungen von Feldern und Schaltflächen für Screenreader (regulärer Ausdruck, Testtext, Ersetzung, Tests, Schließen, Sprache, Thema) sind jetzt übersetzt und folgen dem Sprachwechsel.
 
 ### 1.2.1 — 2026-10-22
 - Übersetzungskorrekturen: Seitentitel und Meta-Tags folgen jetzt der Oberflächensprache; Textreste in der falschen Sprache entfernt.
