@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 1.2.2 · **Utolsó frissítés:** 2026-10-22
+**Verzió:** 1.2.3 · **Utolsó frissítés:** 2026-10-22
 
 A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ A RegexLab egy eszköz JavaScript reguláris kifejezések írására és tesztel
 Töltse le az `index.html` fájlt, és nyissa meg böngészőben; internet nélkül is működik.
 
 ## Előzmények / Változásnapló
+
+### 1.2.3 — 2026-10-22
+- Mobil: a kis szöveg legalább 12 px; a „találatok másolása” gomb és a lábléc hivatkozása nagyobb érintési felületű (a Web Workerben futó ReDoS-időkorlát már megvolt).
 
 ### 1.2.2 — 2026-10-22
 - A mezők és gombok képernyőolvasós címkéi (reguláris kifejezés, tesztszöveg, csere, tesztek, bezárás, nyelv, téma) mostantól le vannak fordítva, és nyelvváltáskor frissülnek.

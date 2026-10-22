@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · **Português** · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versão:** 1.2.2 · **Última atualização:** 2026-10-22
+**Versão:** 1.2.3 · **Última atualização:** 2026-10-22
 
 Idiomas da interface: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ O RegexLab é uma ferramenta para escrever e testar expressões regulares JavaSc
 Descarregue `index.html` e abra-o num navegador; funciona sem internet.
 
 ## Histórico / Registo de alterações
+
+### 1.2.3 — 2026-10-22
+- Telemóvel: o texto pequeno passa a um mínimo de 12 px; o botão «copiar correspondências» e a ligação do rodapé têm áreas de toque maiores (o limite de tempo ReDoS num Web Worker já existia).
 
 ### 1.2.2 — 2026-10-22
 - As etiquetas de campos e botões para leitores de ecrã (expressão regular, texto de teste, substituição, testes, fechar, idioma, tema) estão agora traduzidas e atualizam-se ao mudar de idioma.
