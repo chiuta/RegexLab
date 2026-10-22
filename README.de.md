@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.2.4 · **Zuletzt aktualisiert:** 2026-10-22
+**Version:** 1.2.5 · **Zuletzt aktualisiert:** 2026-10-22
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ RegexLab ist ein Werkzeug zum Schreiben und Testen von regulären JavaScript-Aus
 Laden Sie `index.html` herunter und öffnen Sie sie in einem Browser; sie funktioniert ohne Internet.
 
 ## Verlauf / Changelog
+
+### 1.2.5 — 2026-10-22
+- Längenbegrenzungen für Muster (10 000 Zeichen), Testtext (200 000), Ersetzung und Testfälle, mit übersetzter Meldung: Das Einfügen von 1 MB blockiert die Seite nicht mehr (das Matching lief bereits in einem Web Worker mit Zeitlimit).
 
 ### 1.2.4 — 2026-10-22
 - fff-kit 1.1.2: PBKDF2 mit 600.000 Iterationen, Schutz vor Clickjacking

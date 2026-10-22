@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · **Português** · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versão:** 1.2.4 · **Última atualização:** 2026-10-22
+**Versão:** 1.2.5 · **Última atualização:** 2026-10-22
 
 Idiomas da interface: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ O RegexLab é uma ferramenta para escrever e testar expressões regulares JavaSc
 Descarregue `index.html` e abra-o num navegador; funciona sem internet.
 
 ## Histórico / Registo de alterações
+
+### 1.2.5 — 2026-10-22
+- Limites de comprimento para o padrão (10 000 caracteres), o texto de teste (200 000), a substituição e os casos de teste, com mensagem traduzida: colar 1 MB já não bloqueia a página (a correspondência já corria num Web Worker com tempo limite).
 
 ### 1.2.4 — 2026-10-22
 - fff-kit 1.1.2: PBKDF2 com 600.000 iterações, proteção anti-clickjacking

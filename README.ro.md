@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.2.4 · **Ultima actualizare:** 2026-10-22
+**Versiune:** 1.2.5 · **Ultima actualizare:** 2026-10-22
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,9 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
 ## Istoric / Changelog
+
+### 1.2.5 — 2026-10-22
+- Limite de lungime pentru pattern (10 000 de caractere), textul de test (200 000), înlocuire și cazurile de test, cu mesaj tradus: lipirea a 1 MB nu mai blochează pagina (potrivirea rula deja într-un Web Worker, cu timeout).
 
 ### 1.2.4 — 2026-10-22
 - fff-kit 1.1.2: PBKDF2 600 000 iterații, protecție anti-clickjacking
