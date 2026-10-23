@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · **Deutsch** · [Magyar](README.hu.md)
 
-**Version:** 1.2.7 · **Zuletzt aktualisiert:** 2026-10-23
+**Version:** 1.2.8 · **Zuletzt aktualisiert:** 2026-10-23
 
 Oberflächensprachen: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,10 @@ RegexLab ist ein Werkzeug zum Schreiben und Testen von regulären JavaScript-Aus
 Laden Sie `index.html` herunter und öffnen Sie sie in einem Browser; sie funktioniert ohne Internet.
 
 ## Verlauf / Changelog
+
+### 1.2.8 — 2026-10-23
+
+- CSP gehärtet: `blob:` aus `script-src` entfernt (der `blob:`-Worker bleibt über `worker-src` erlaubt).
 
 ### 1.2.6 — 2026-10-22
 

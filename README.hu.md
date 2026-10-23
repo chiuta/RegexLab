@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · **Magyar**
 
-**Verzió:** 1.2.7 · **Utolsó frissítés:** 2026-10-23
+**Verzió:** 1.2.8 · **Utolsó frissítés:** 2026-10-23
 
 A felület nyelvei: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,10 @@ A RegexLab egy eszköz JavaScript reguláris kifejezések írására és tesztel
 Töltse le az `index.html` fájlt, és nyissa meg böngészőben; internet nélkül is működik.
 
 ## Előzmények / Változásnapló
+
+### 1.2.8 — 2026-10-23
+
+- CSP szigorítva: a `blob:` eltávolítva a `script-src` irányelvből (a `blob:` Worker a `worker-src` révén továbbra is engedélyezett).
 
 ### 1.2.6 — 2026-10-22
 
