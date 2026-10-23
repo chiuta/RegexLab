@@ -1,0 +1,35 @@
+// Regresie 1.2.8 (RegexLab): CSP fără `blob:` în script-src (worker-src păstrează blob: pentru Worker); hash-urile scripturilor inline corespund; fără violări CSP la pornire.
+// Rulare: node tests/csp.test.mjs   (Playwright din /opt/node-tools; rețea blocată)
+import {createRequire} from 'module';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const require = createRequire('/opt/node-tools/package.json');
+const {chromium} = require('playwright');
+const INDEX = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'index.html');
+let ok = 0, bad = 0;
+const t = (n, c, x) => { if (c) { ok++; console.log('  ok  ' + n); } else { bad++; console.log('  FAIL ' + n + (x !== undefined ? ' :: ' + JSON.stringify(x) : '')); } };
+const html = fs.readFileSync(INDEX, 'utf8');
+const csp = html.match(/Content-Security-Policy" content="([^"]*)"/)[1];
+const dir = (n) => csp.split(';').map((s) => s.trim()).find((s) => s.startsWith(n + ' ')) || '';
+t('script-src fără blob:', !/blob:/.test(dir('script-src')), dir('script-src').slice(0, 60));
+t('worker-src păstrează blob: (Worker-ul de potrivire)', /blob:/.test(dir('worker-src')), dir('worker-src'));
+const hashes = [...csp.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]);
+const inline = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter((m) => !/type\s*=\s*["']?(application\/json|text\/plain)/.test(m[1]) && !/\bsrc=/.test(m[1])).map((m) => crypto.createHash('sha256').update(m[2], 'utf8').digest('base64'));
+t('hash-urile CSP acoperă exact scripturile inline', inline.length === hashes.length && inline.every((h) => hashes.includes(h)));
+const b = await chromium.launch({executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox']});
+const ctx = await b.newContext({viewport: {width: 1000, height: 800}});
+await ctx.route(/^https?:/, (r) => r.abort());
+const page = await ctx.newPage();
+const errs = [];
+page.on('pageerror', (e) => errs.push(String(e)));
+page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+await page.addInitScript(() => { window.__csp = []; document.addEventListener('securitypolicyviolation', (e) => window.__csp.push(e.violatedDirective + ' ' + e.blockedURI)); });
+await page.goto('file://' + INDEX);
+await page.waitForTimeout(1500);
+t('0 erori', errs.length === 0, errs);
+t('0 violări CSP', (await page.evaluate(() => window.__csp)).length === 0);
+await b.close();
+console.log(`\n${ok} reușite, ${bad} eșuate`);
+process.exit(bad ? 1 : 0);

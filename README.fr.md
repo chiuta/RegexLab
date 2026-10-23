@@ -2,7 +2,7 @@
 
 [English](README.md) · [Română](README.ro.md) · **Français** · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version :** 1.2.7 · **Dernière mise à jour :** 2026-10-23
+**Version :** 1.2.9 · **Dernière mise à jour :** 2026-10-23
 
 Langues de l'interface : **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,14 @@ RegexLab est un outil pour écrire et tester des expressions régulières JavaSc
 Téléchargez `index.html` et ouvrez-le dans un navigateur ; il fonctionne sans internet.
 
 ## Historique / Journal des modifications
+
+### 1.2.9 — 2026-10-23
+
+- Cibles tactiles d’au moins 44 px sur les appareils tactiles (`pointer:coarse`) ; le bureau reste inchangé.
+
+### 1.2.8 — 2026-10-23
+
+- CSP renforcée : `blob:` retiré de `script-src` (le Worker `blob:` reste autorisé via `worker-src`).
 
 ### 1.2.6 — 2026-10-22
 

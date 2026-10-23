@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.2.7 · **Last updated:** 2026-10-23
+**Version:** 1.2.9 · **Last updated:** 2026-10-23
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -50,6 +50,14 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 Download `index.html` and open it in a browser; it works without internet.
 
 ## History / Changelog
+
+### 1.2.9 — 2026-10-23
+
+- Touch targets of at least 44 px on touch devices (`pointer:coarse`); desktop is unchanged.
+
+### 1.2.8 — 2026-10-23
+
+- CSP hardened: removed `blob:` from `script-src` (the `blob:` Worker stays allowed via `worker-src`).
 
 ### 1.2.6 — 2026-10-22
 
