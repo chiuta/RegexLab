@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 1.2.10 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -21,6 +21,8 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 - Câmp pentru model (`/.../`), fanioane `g i m s u v y` (`u` și `v` se exclud reciproc), indicator de validitate („valid” / eroare), număr de potriviri și timp de execuție.
 - Zona **Test string** cu evidențierea potrivirilor.
 - Fila **Tests**: cazuri de test, un caz pe linie — `+ text` trebuie să se potrivească, `- text` nu; se afișează reușit/eșuat pe caz și totalul (evaluate în același Web Worker, cu aceeași limită de timp).
+- **Depanator (2.0):** fila **Debugger** rulează un motor de potrivire instrumentat și arată pas cu pas încercările, capturile și backtracking-ul (cu butoane înainte/înapoi, cursor, redare automată și „Next match”). Este un model simplificat al motorului JavaScript (flaguri `i m s`, primele 400 de caractere; fără lookbehind și `\p{…}`), folosit doar pentru explicație. Dacă motorul depășește 50 000 de pași, se oprește și semnalează un backtracking probabil catastrofic, cu sugestii de rescriere (`(a+)+` → `(a+)`, repetiții vecine îmbinate, alternative duplicate; indicii pentru suprapuneri) și numărul de pași înainte/după pe textul tău, plus o verificare de echivalență pe textele tale.
+- **Din exemple în pattern (2.0):** în **Tests**, butonul „Generate a pattern…” propune un pattern din liniile `+` și îl verifică față de liniile `-`. În **Code**, un tabel de compatibilitate avertizează despre diferențele față de PCRE/PHP, Python și RE2/Go.
 - Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
 - Fragmentele de cod adaptează grupurile numite pentru Python/Go (`(?P<n>…)`) și adaugă note când sintaxa nu este disponibilă (Go: fără lookaround/backreferințe; Python: fără `\p{…}`; PHP: `\p{…}` cere modificatorul `u`).
 - Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP și Go), **Library** (15 modele gata făcute, în opt limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
@@ -50,6 +52,10 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
 ## Istoric / Changelog
+
+### 2.0.0 — 2026-10-26
+
+- Depanator vizual pas cu pas cu sugestii de rescriere anti-ReDoS, generator de pattern din exemple `+`/`-` și note de compatibilitate (PCRE/PHP, Python, RE2/Go). Teste în `tests/debugger.test.mjs`.
 
 ### 1.2.9 — 2026-10-23
 

@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 1.2.10 · **Last updated:** 2026-10-26
+**Version:** 2.0.0 · **Last updated:** 2026-10-26
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -18,6 +18,8 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 
 ## Features
 
+- **Debugger (2.0):** the **Debugger** tab runs an instrumented matcher and shows attempts, captures and backtracking step by step (previous/next buttons, slider, autoplay and "Next match"). It is a simplified model of the JavaScript engine (flags `i m s`, first 400 characters; no lookbehind or `\p{…}`), used only for explanation. If the matcher exceeds 50,000 steps it stops and reports probable catastrophic backtracking, with rewrite suggestions (`(a+)+` → `(a+)`, merged adjacent repetitions, duplicate alternatives; hints for overlaps), the step count before/after on your text and an equivalence check on your samples.
+- **Pattern from examples (2.0):** in **Tests**, "Generate a pattern…" proposes a pattern from the `+` lines and checks it against the `-` lines. In **Code**, a compatibility table warns about differences from PCRE/PHP, Python and RE2/Go.
 - Pattern field (`/.../`), flags `g i m s u v y` (`u` and `v` are mutually exclusive), validity indicator ("valid" / error), match count and execution time.
 - **Test string** area with match highlighting.
 - **Tests** tab: test cases, one per line — `+ text` must match, `- text` must not; shows pass/fail per case and the total (evaluated in the same Web Worker, with the same time limit).
@@ -50,6 +52,10 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 Download `index.html` and open it in a browser; it works without internet.
 
 ## History / Changelog
+
+### 2.0.0 — 2026-10-26
+
+- Step-by-step visual debugger with anti-ReDoS rewrite suggestions, a pattern generator from `+`/`-` examples and compatibility notes (PCRE/PHP, Python, RE2/Go). Tests in `tests/debugger.test.mjs`.
 
 ### 1.2.9 — 2026-10-23
 
