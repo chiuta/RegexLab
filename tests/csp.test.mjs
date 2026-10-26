@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-const require = createRequire('/opt/node-tools/package.json');
+const require = createRequire(process.env.PW_ROOT || import.meta.url);
 const {chromium} = require('playwright');
 const INDEX = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'index.html');
 let ok = 0, bad = 0;
@@ -18,7 +18,7 @@ t('worker-src păstrează blob: (Worker-ul de potrivire)', /blob:/.test(dir('wor
 const hashes = [...csp.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]);
 const inline = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter((m) => !/type\s*=\s*["']?(application\/json|text\/plain)/.test(m[1]) && !/\bsrc=/.test(m[1])).map((m) => crypto.createHash('sha256').update(m[2], 'utf8').digest('base64'));
 t('hash-urile CSP acoperă exact scripturile inline', inline.length === hashes.length && inline.every((h) => hashes.includes(h)));
-const b = await chromium.launch({executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox']});
+const b = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox']});
 const ctx = await b.newContext({viewport: {width: 1000, height: 800}});
 await ctx.route(/^https?:/, (r) => r.abort());
 const page = await ctx.newPage();

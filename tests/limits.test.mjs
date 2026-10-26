@@ -1,11 +1,11 @@
 // RegexLab — limite de lungime (pattern, text de test, înlocuire, teste) și fir principal nebloat.
 // Rulare: node tests/limits.test.mjs [index.html]
 import {createRequire} from "module"; import path from "path"; import {fileURLToPath} from "url";
-const require = createRequire("/opt/node-tools/package.json"); const {chromium} = require("playwright");
+const require = createRequire(process.env.PW_ROOT || import.meta.url); const {chromium} = require("playwright");
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FILE = "file://" + path.resolve(process.argv[2] || path.join(HERE, "..", "index.html"));
 let fails = 0, passes = 0; const check = (n, c, x) => { c ? (passes++, console.log("  ok  " + n)) : (fails++, console.log("FAIL  " + n + (x !== undefined ? "  -> " + JSON.stringify(x) : ""))); };
-const b = await chromium.launch({executablePath: "/opt/pw-browsers/chromium", args: ["--no-sandbox"]});
+const b = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || undefined, args: ["--no-sandbox"]});
 const LANGS = ["en", "ro", "fr", "it", "es", "pt", "de", "hu"];
 async function open(lang) {
   const ctx = await b.newContext({serviceWorkers: "block", viewport: {width: 1280, height: 900}}); await ctx.route(/^https?:/, r => r.abort());
