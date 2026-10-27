@@ -27,7 +27,7 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 - **Din exemple în pattern (2.0):** în **Tests**, butonul „Generate a pattern…” propune un pattern din liniile `+` și îl verifică față de liniile `-`. În **Code**, un tabel de compatibilitate avertizează despre diferențele față de PCRE/PHP, Python și RE2/Go.
 - Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
 - Fragmentele de cod adaptează grupurile numite pentru Python/Go (`(?P<n>…)`) și adaugă note când sintaxa nu este disponibilă (Go: fără lookaround/backreferințe; Python: fără `\p{…}`; PHP: `\p{…}` cere modificatorul `u`).
-- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP, Go, Java, C# și Ruby), **Library** (15 modele gata făcute, în opt limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
+- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP, Go, Java, C# și Ruby), **Library** (22 de modele gata făcute, în opt limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
 - Evaluarea rulează într-un Web Worker, cu limită de timp de 1500 ms și mesaj de avertizare la posibil „catastrophic backtracking”.
 - Butoane **Copy regex**, **Copy link** (permalink cu modelul, fanioanele, textul și înlocuirea în fragmentul `#` al URL-ului) și **Reset**.
 - Temă luminoasă / întunecată (**Theme**), fereastră **About**.
