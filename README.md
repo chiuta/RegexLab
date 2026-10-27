@@ -2,7 +2,7 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.1.0 · **Last updated:** 2026-10-27
+**Version:** 2.2.0 · **Last updated:** 2026-10-27
 
 **Status:** stable · **Offline:** complete (no network requests)
 
@@ -60,7 +60,17 @@ Download `index.html` and open it in a browser; it works without internet.
 - **Other dialects (PCRE, Python, RE2/Go)**: remain **a compatibility table and conversions in the code snippets**, not real execution; the engine is the browser's (JavaScript). Really running PCRE/Python/RE2 would need WebAssembly engines (hundreds of KB to MB, against the "no dependencies" principle): **planned, not implemented**.
 - **ReDoS alert**: already existed (heuristic warning + debugger detecting catastrophic backtracking, 1.5 s limit).
 
+## 2.2.0: Perl snippet and verification of the generated code (2026-10-27)
+
+- **Perl** added to the Code tab (`while ($text =~ m'…'flags) { print "$&\n"; }`; single-quote delimiters so that `$` and `@` in the pattern are never interpolated; i/m/s mapped, notes for `\d \w \s` on Unicode strings and for the sticky flag). Texts of the help in 8 languages (fr/it/es/pt/de: machine translation).
+- **Real-engine verification of the snippets** (`tests/codegen.test.mjs`): for 9 patterns the generated Python, PHP, Go, Java, Ruby and Perl code is run with the real interpreter/compiler installed here and the list of matches is compared with the page's JavaScript engine (117 checks, 52 real executions, all equal). Go (RE2) cases with lookaround/backreference are not run: the test checks that the snippet warns that it will not compile. **C# is not run** (no .NET here) and a Rust snippet was **not added** (the `regex` crate is not available here to verify it).
+- This verifies the *generated code*, not the engines inside RegexLab: **PCRE/Python/RE2 are still not executed in the page** (that would need WebAssembly engines; against the "no dependencies" principle) — **planned, not implemented**.
+
 ## History / Changelog
+
+### 2.2.0 — 2026-10-27 (previous: 2.1.0)
+
+Perl snippet; test that runs the generated code in real interpreters. PCRE/Python/RE2 execution in the page remains planned.
 
 ### 2.1.0 — 2026-10-27 (previous: 2.0.0)
 
