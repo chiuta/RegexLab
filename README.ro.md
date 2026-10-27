@@ -2,7 +2,7 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+**Versiune:** 2.2.0 · **Ultima actualizare:** 2026-10-27
 
 **Stare:** stabil · **Offline:** complet (fără cereri de rețea)
 
@@ -60,7 +60,17 @@ Descarcă `index.html` și deschide-l în browser; funcționează fără interne
 - **Alte dialecte (PCRE, Python, RE2/Go)**: rămân **o tabelă de compatibilitate și conversii în fragmentele de cod**, nu o execuție reală; motorul este cel din browser (JavaScript). Rularea reală a PCRE/Python/RE2 ar cere motoare compilate în WebAssembly (sute de KB–MB, ar încălca principiul „fără dependențe”): **planificat, neimplementat**.
 - **Alertă ReDoS**: exista deja (avertisment euristic + depanator cu detectare de backtracking catastrofic și limită de 1,5 s).
 
+## 2.2.0: fragment Perl și verificarea codului generat (2026-10-27)
+
+- **Perl** adăugat în fila Cod (`while ($text =~ m'…'indicatori) { print "$&\n"; }`; delimitatori cu apostrof, ca `$` și `@` din pattern să nu fie niciodată interpolate; i/m/s mapate, note pentru `\d \w \s` pe șiruri Unicode și pentru indicatorul sticky). Textele de ajutor în 8 limbi (fr/it/es/pt/de: traducere automată).
+- **Verificarea fragmentelor cu motoare reale** (`tests/codegen.test.mjs`): pentru 9 pattern-uri, codul generat în Python, PHP, Go, Java, Ruby și Perl este rulat cu interpretorul/compilatorul real instalat aici și lista potrivirilor este comparată cu motorul JavaScript al paginii (117 verificări, 52 de execuții reale, toate egale). Cazurile Go (RE2) cu lookaround/backreferință nu sunt rulate: testul verifică că fragmentul avertizează că nu se compilează. **C# nu este rulat** (fără .NET aici) și **nu s-a adăugat** un fragment Rust (crate-ul `regex` nu este disponibil aici pentru verificare).
+- Aceasta verifică *codul generat*, nu motoarele din RegexLab: **PCRE/Python/RE2 tot nu sunt executate în pagină** (ar cere motoare WebAssembly; contrazice principiul „fără dependențe”) — **planificat, neimplementat**.
+
 ## Istoric / Changelog
+
+### 2.2.0 — 2026-10-27 (anterior: 2.1.0)
+
+Fragment Perl; test care rulează codul generat în interpretoare reale. Execuția PCRE/Python/RE2 în pagină rămâne planificată.
 
 ### 2.1.0 — 2026-10-27 (anterior: 2.0.0)
 
