@@ -2,7 +2,9 @@
 
 **English** · [Română](README.ro.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Version:** 2.0.0 · **Last updated:** 2026-10-26
+**Version:** 2.1.0 · **Last updated:** 2026-10-27
+
+**Status:** stable · **Offline:** complete (no network requests)
 
 Interface languages: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -25,7 +27,7 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 - **Tests** tab: test cases, one per line — `+ text` must match, `- text` must not; shows pass/fail per case and the total (evaluated in the same Web Worker, with the same time limit).
 - Static (heuristic) warning for nested quantifiers, before a timeout is reached.
 - The code snippets adapt named groups for Python/Go (`(?P<n>…)`) and add notes when the syntax is not available (Go: no lookaround/backreferences; Python: no `\p{…}`; PHP: `\p{…}` requires the `u` modifier).
-- Seven tabs: **Matches** (matches and groups), **Explanation** (explanation of the pattern), **Replace** (replacement with `$1`, `$2`, `$&`), **Code** (ready-to-paste snippets for JavaScript, Python, PHP and Go), **Library** (15 ready-made patterns, in eight languages), **Tests** (test cases) and **Reference** (reference sheet).
+- Seven tabs: **Matches** (matches and groups), **Explanation** (explanation of the pattern), **Replace** (replacement with `$1`, `$2`, `$&`), **Code** (ready-to-paste snippets for JavaScript, Python, PHP, Go, Java, C# and Ruby), **Library** (22 ready-made patterns, in eight languages), **Tests** (test cases) and **Reference** (reference sheet).
 - Evaluation runs in a Web Worker, with a 1500 ms time limit and a warning message for possible "catastrophic backtracking".
 - **Copy regex**, **Copy link** (permalink with the pattern, flags, text and replacement in the URL's `#` fragment) and **Reset** buttons.
 - Light / dark theme (**Theme**), **About** window.
@@ -51,7 +53,18 @@ RegexLab is a tool for writing and testing JavaScript regular expressions right 
 
 Download `index.html` and open it in a browser; it works without internet.
 
+## News in 2.1.0 and what is not implemented (2026-10-27)
+
+- **Code generation**: besides JavaScript, Python, PHP and Go, the Code tab now generates snippets for **Java**, **C#** and **Ruby** (escaping and flags adapted; notes where the syntax differs). The Java and Ruby snippets were checked by compiling/running them on an example with `\d`, quotes and flags.
+- **Library of common expressions**: 7 new patterns in the "Developer & web" category (UUID, semantic version SemVer — the official semver.org expression, MAC address, 24 h time, repeated word, Markdown link, leading/trailing whitespace); the library now has 22 patterns. Each was tested with positive and negative samples.
+- **Other dialects (PCRE, Python, RE2/Go)**: remain **a compatibility table and conversions in the code snippets**, not real execution; the engine is the browser's (JavaScript). Really running PCRE/Python/RE2 would need WebAssembly engines (hundreds of KB to MB, against the "no dependencies" principle): **planned, not implemented**.
+- **ReDoS alert**: already existed (heuristic warning + debugger detecting catastrophic backtracking, 1.5 s limit).
+
 ## History / Changelog
+
+### 2.1.0 — 2026-10-27 (previous: 2.0.0)
+
+Java/C#/Ruby code generation; 7 new library patterns; PCRE/Python/RE2 dialects remain a compatibility table (real execution planned).
 
 ### 2.0.0 — 2026-10-26
 
@@ -114,4 +127,4 @@ Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf
 
 ## Summary
 
-RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go), a 15-pattern library and a reference sheet, in 8 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.
+RegexLab is a single-file regular-expression laboratory: live matching with highlighting, explanation, replace, code snippets (JavaScript, Python, PHP, Go, Java, C#, Ruby), a 22-pattern library and a reference sheet, in 8 UI languages. Matching runs in a Web Worker with a 1.5 s timeout. State is kept in localStorage; no network requests or telemetry. MIT licence.

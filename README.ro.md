@@ -2,7 +2,9 @@
 
 [English](README.md) · **Română** · [Français](README.fr.md) · [Italiano](README.it.md) · [Español](README.es.md) · [Português](README.pt.md) · [Deutsch](README.de.md) · [Magyar](README.hu.md)
 
-**Versiune:** 2.0.0 · **Ultima actualizare:** 2026-10-26
+**Versiune:** 2.1.0 · **Ultima actualizare:** 2026-10-27
+
+**Stare:** stabil · **Offline:** complet (fără cereri de rețea)
 
 Limbile interfeței: **Română, English, Français, Italiano, Español, Português (PT), Deutsch, Magyar**
 
@@ -25,7 +27,7 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 - **Din exemple în pattern (2.0):** în **Tests**, butonul „Generate a pattern…” propune un pattern din liniile `+` și îl verifică față de liniile `-`. În **Code**, un tabel de compatibilitate avertizează despre diferențele față de PCRE/PHP, Python și RE2/Go.
 - Avertisment static (euristic) pentru cuantificatori imbricați, înainte de a se ajunge la timeout.
 - Fragmentele de cod adaptează grupurile numite pentru Python/Go (`(?P<n>…)`) și adaugă note când sintaxa nu este disponibilă (Go: fără lookaround/backreferințe; Python: fără `\p{…}`; PHP: `\p{…}` cere modificatorul `u`).
-- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP și Go), **Library** (15 modele gata făcute, în opt limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
+- Șapte file: **Matches** (potriviri și grupuri), **Explanation** (explicarea modelului), **Replace** (înlocuire cu `$1`, `$2`, `$&`), **Code** (fragmente gata de lipit pentru JavaScript, Python, PHP, Go, Java, C# și Ruby), **Library** (22 de modele gata făcute, în opt limbi), **Tests** (cazuri de test) și **Reference** (fișă de referință).
 - Evaluarea rulează într-un Web Worker, cu limită de timp de 1500 ms și mesaj de avertizare la posibil „catastrophic backtracking”.
 - Butoane **Copy regex**, **Copy link** (permalink cu modelul, fanioanele, textul și înlocuirea în fragmentul `#` al URL-ului) și **Reset**.
 - Temă luminoasă / întunecată (**Theme**), fereastră **About**.
@@ -51,7 +53,18 @@ RegexLab este un instrument pentru scrierea și testarea expresiilor regulate Ja
 
 Descarcă `index.html` și deschide-l în browser; funcționează fără internet.
 
+## Noutăți 2.1.0 și ce nu este implementat (2026-10-27)
+
+- **Generare de cod**: pe lângă JavaScript, Python, PHP, Go, Java, C# și Ruby, fila Cod generează acum fragmente pentru **Java**, **C#** și **Ruby** (escape-uri și indicatori adaptați; note când sintaxa diferă). Fragmentele Java și Ruby au fost verificate prin compilare/rulare pe un exemplu cu `\d`, ghilimele și flag-uri.
+- **Bibliotecă de expresii frecvente**: 7 modele noi în categoria „Dezvoltare & web” (UUID, versiune semantică SemVer — expresia oficială semver.org, adresă MAC, oră 24 h, cuvânt repetat, link Markdown, spații la început/sfârșit); biblioteca are acum 22 de modele. Fiecare a fost testat pe exemple pozitive și negative.
+- **Alte dialecte (PCRE, Python, RE2/Go)**: rămân **o tabelă de compatibilitate și conversii în fragmentele de cod**, nu o execuție reală; motorul este cel din browser (JavaScript). Rularea reală a PCRE/Python/RE2 ar cere motoare compilate în WebAssembly (sute de KB–MB, ar încălca principiul „fără dependențe”): **planificat, neimplementat**.
+- **Alertă ReDoS**: exista deja (avertisment euristic + depanator cu detectare de backtracking catastrofic și limită de 1,5 s).
+
 ## Istoric / Changelog
+
+### 2.1.0 — 2026-10-27 (anterior: 2.0.0)
+
+Generare de cod Java/C#/Ruby; 7 modele noi în bibliotecă; dialectele PCRE/Python/RE2 rămân tabel de compatibilitate (execuție reală planificată).
 
 ### 2.0.0 — 2026-10-26
 
@@ -114,4 +127,4 @@ Alexio — Alexandru-Ionuț Chiuță. Contact: alexio@trom.tf
 
 ## Rezumat
 
-RegexLab este un laborator de expresii regulate într-un singur fișier: potrivire în direct cu evidențiere, explicație, înlocuire, fragmente de cod (JavaScript, Python, PHP, Go), o bibliotecă de 15 modele și o fișă de referință, în 8 limbi de interfață. Potrivirea rulează într-un Web Worker cu limită de 1,5 s. Starea se păstrează în localStorage; fără cereri de rețea sau telemetrie. Licență MIT.
+RegexLab este un laborator de expresii regulate într-un singur fișier: potrivire în direct cu evidențiere, explicație, înlocuire, fragmente de cod (JavaScript, Python, PHP, Go, Java, C#, Ruby), o bibliotecă de 22 modele și o fișă de referință, în 8 limbi de interfață. Potrivirea rulează într-un Web Worker cu limită de 1,5 s. Starea se păstrează în localStorage; fără cereri de rețea sau telemetrie. Licență MIT.
