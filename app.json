@@ -11,12 +11,13 @@
     "serviceWorker",
     "localStorage",
     "Web Crypto",
+    "WebGL",
     "Worker",
     "BroadcastChannel"
   ],
   "storageKeys": [],
-  "sizeBytes": 629697,
-  "sha256": "39c5eb6fe4efc8f6371651ea1b8cabbf3e9478587d6b446a4ae41e2fe67c21ea",
+  "sizeBytes": 681706,
+  "sha256": "d3c19aad6e18aafda25d476093e33015edc2f83857cdc0c784fcb97372324049",
   "csp": {
     "present": true,
     "directives": {
@@ -29,7 +30,7 @@
       "base-uri": "'self'",
       "form-action": "'self'",
       "worker-src": "'self' blob:",
-      "script-src": "'self' sha256×7",
+      "script-src": "'self' sha256×8",
       "connect-src": "'self'",
       "manifest-src": "'self'"
     },
